@@ -1,4 +1,4 @@
-<div allign="center">
+<div align="center">
 
 # 🎵 Aoede - Enterprise AI No-Code Agent
 
@@ -35,27 +35,23 @@ To democratize AI development by providing enterprise-grade tools that enable an
 
 ## 🚀 Key Features
 
-<<<<<<< Updated upstream
-<div allign="center">
-=======
 <div align="center">
 
->>>>>>> Stashed changes
 <table>
 <tr>
-<td allign="center" width="33%">
+<td align="center" width="33%">
 
 ### 🧠 AI-Powered Intelligence
 Multi-model AI integration with GitHub's latest models including GPT-4, Codestral, and Cohere for comprehensive code generation and analysis.
 
 </td>
-<td allign="center" width="33%">
+<td align="center" width="33%">
 
 ### 🔧 No-Code Platform
 Intuitive drag-and-drop interface enabling anyone to build sophisticated AI workflows without programming knowledge.
 
 </td>
-<td allign="center" width="33%">
+<td align="center" width="33%">
 
 ### 🛡️ Enterprise Security
 Bank-grade security with comprehensive audit logging, RBAC, and compliance with SOC2, GDPR, and HIPAA standards.
@@ -63,19 +59,19 @@ Bank-grade security with comprehensive audit logging, RBAC, and compliance with 
 </td>
 </tr>
 <tr>
-<td allign="center">
+<td align="center">
 
 ### ⚡ Real-Time Collaboration
 WebSocket-based live updates enabling teams to collaborate on AI projects in real-time with instant synchronization.
 
 </td>
-<td allign="center">
+<td align="center">
 
 ### 🔄 Automated Testing
 Intelligent iterative testing cycles with automatic error detection, resolution, and continuous validation of generated code.
 
 </td>
-<td allign="center">
+<td align="center">
 
 ### 📊 Advanced Analytics
 Comprehensive monitoring and analytics dashboard with detailed insights into AI model performance and usage patterns.
@@ -103,15 +99,11 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 
 ## 🛠️ Technology Stack
 
-<<<<<<< Updated upstream
-<div allign="center">
-=======
 <div align="center">
 
->>>>>>> Stashed changes
 <table>
 <tr>
-<td allign="center" width="25%">
+<td align="center" width="25%">
 
 ### Backend  
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)  
@@ -119,7 +111,7 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-323232?style=for-the-badge&logo=sqlalchemy&logoColor=red)
 
 </td>
-<td allign="center" width="25%">
+<td align="center" width="25%">
 
 ### Frontend  
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)  
@@ -127,7 +119,7 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 
 </td>
-<td allign="center" width="25%">
+<td align="center" width="25%">
 
 ### Database  
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)  
@@ -135,7 +127,7 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
 
 </td>
-<td allign="center" width="25%">
+<td align="center" width="25%">
 
 ### DevOps  
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)  
@@ -191,7 +183,7 @@ docker-compose up --build
 
 ## 📈 Development Progress
 
-<div allign="center">
+<div align="center">
 
 ### 🎯 Project Completion: 100%
 
@@ -205,48 +197,7 @@ docker-compose up --build
 
 ## 📚 Documentation & Resources
 
-<<<<<<< Updated upstream
-<div allign="center">
-<table>
-<tr>
-<td allign="center" width="25%">
-
-### 📖 **User Guide**
-[Getting Started](https://aoede.kanopus.org/docs/getting-started)<br>
-[Tutorials](https://aoede.kanopus.org/docs/tutorials)<br>
-[Best Practices](https://aoede.kanopus.org/docs/best-practices)
-
-</td>
-<td allign="center" width="25%">
-
-### 🔧 **Developer Docs**
-[API Reference](https://aoede.kanopus.org/docs/api)<br>
-[SDK Documentation](https://aoede.kanopus.org/docs/sdk)<br>
-[Integration Guide](https://aoede.kanopus.org/docs/integrations)
-
-</td>
-<td allign="center" width="25%">
-
-### 🏗️ **Architecture**
-[System Design](https://aoede.kanopus.org/docs/architecture)<br>
-[Security Model](https://aoede.kanopus.org/docs/security)<br>
-[Deployment Guide](https://aoede.kanopus.org/docs/deployment)
-
-</td>
-<td allign="center" width="25%">
-
-### 🤝 **Community**
-[Contributing Guide](CONTRIBUTING.md)<br>
-[Code of Conduct](CODE_OF_CONDUCT.md)<br>
-[Support Forum](https://github.com/Kanopusdev/Aoede/discussions)
-
-</td>
-</tr>
-</table>
-</div>
-=======
 Links grouped by: **User Guide**, **Developer Docs**, **Architecture**, and **Community** (same as original)
->>>>>>> Stashed changes
 
 ---
 
@@ -258,52 +209,19 @@ Instructions on how to fork, branch, contribute, test, and open PRs (same as ori
 
 ## 📄 License & Legal
 
-<<<<<<< Updated upstream
-<div allign="center">
-=======
 Licensed under the **MIT License** — see the [LICENSE](LICENSE) file.
->>>>>>> Stashed changes
 
 ### 🏢 Enterprise Support
 
-<<<<<<< Updated upstream
-### 🏢 **Enterprise Support**
-For enterprise licensing, support, and custom solutions, contact us at [enterprise@kanopus.org](mailto:contact@kanopus.org)
-
-### 🔒 **Security**
-For security vulnerabilities, please email [security@kanopus.org](mailto:contact@kanopus.org) instead of using the issue tracker.
-
-</div>
-
----
-
-## 🙏 **Acknowledgments**
-
-<div allign="center">
-
-### 💝 **Special Thanks**
-- **GitHub** for providing world-class AI models through GitHub Models
-- **FastAPI Community** for the excellent web framework
-- **Open Source Contributors** who make projects like this possible
-- **Enterprise Partners** who trust Aoede for their AI initiatives
-
-### 🌟 **Powered By**
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com)
-[![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)](https://fastapi.tiangolo.com)
-[![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)](https://python.org)
-
-</div>
-=======
 Contact: [enterprise@kanopus.org](mailto:enterprise@kanopus.org)
 
 ### 🔒 Security
 
 Report issues to: [security@kanopus.org](mailto:security@kanopus.org)
->>>>>>> Stashed changes
 
 ---
 
-<div allign="center">
+<div align="center">
 
 ## 🙏 Acknowledgments
 
