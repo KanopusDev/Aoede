@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Custom Swagger UI Styling */
+        .swagger-ui .topbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .swagger-ui .topbar .download-url-wrapper {
+            display: none;
+        }
+        
+        .swagger-ui .info {
+            margin-bottom: 2rem;
+        }
+        
+        .swagger-ui .info .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .swagger-ui .info .description {
+            font-size: 1.125rem;
+            color: #64748b;
+            line-height: 1.75;
+        }
+        
+        .swagger-ui .scheme-container {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .swagger-ui .opblock.opblock-get {
+            background: linear-gradient(135deg, #dcfdf7 0%, #a7f3d0 100%);
+            border: 1px solid #10b981;
+        }
+        
+        .swagger-ui .opblock.opblock-post {
+            background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%);
+            border: 1px solid #3b82f6;
+        }
+        
+        .swagger-ui .opblock.opblock-put {
+            background: linear-gradient(135deg, #fef3c7 0%, #fbbf24 100%);
+            border: 1px solid #f59e0b;
+        }
+        
+        .swagger-ui .opblock.opblock-delete {
+            background: linear-gradient(135deg, #fee2e2 0%, #fca5a5 100%);
+            border: 1px solid #ef4444;
+        }
+        
+        .swagger-ui .opblock .opblock-summary {
+            border-radius: 12px;
+        }
+        
+        .swagger-ui .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .swagger-ui .btn.execute {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+        
+        .swagger-ui .btn.execute:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .custom-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.8); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Custom Header -->
+    <div class="custom-header relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-white opacity-10 floating"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-white opacity-10 floating" style="animation-delay: -1s;"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center pulse-glow">
+                        <i class="fas fa-code text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">{{ title }}</h1>
+                        <p class="text-xl text-white/90">Enterprise API Documentation</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200">
+                        <i class="fas fa-home mr-2"></i>
+                        <span class="font-medium">Back to App</span>
+                    </a>
+                    <a href="/api/redoc" class="flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200">
+                        <i class="fas fa-book mr-2"></i>
+                        <span class="font-medium">ReDoc</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- API Statistics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">15+</div>
+                        <div class="text-sm text-white/80">API Endpoints</div>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">4</div>
+                        <div class="text-sm text-white/80">AI Models</div>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">v1.0</div>
+                        <div class="text-sm text-white/80">API Version</div>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">REST</div>
+                        <div class="text-sm text-white/80">Architecture</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+        <!-- Documentation Info -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 mb-8">
+            <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-info-circle text-blue-600 text-xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">API Documentation</h3>
+                    <p class="text-gray-600 mb-4">
+                        Comprehensive documentation for the Aoede Enterprise AI No-Code Agent API. 
+                        This interactive documentation allows you to explore and test all available endpoints.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-green-50 rounded-lg p-3 border border-green-200">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-shield-alt text-green-600"></i>
+                                <span class="text-sm font-medium text-green-800">Rate Limited</span>
+                            </div>
+                            <p class="text-xs text-green-700 mt-1">All endpoints are protected with intelligent rate limiting</p>
+                        </div>
+                        <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                            <div class="flex items-center space-x-2">
+                                <i class="fas fa-lock text-blue-600"></i>
+                                <span class="text-sm font-medium text-blue-800">Secure</span>
+                            </div>
+                            <p class="text-xs text-blue-700 mt-1">Enterprise-grade security and authentication</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Swagger UI Container -->
+        <div id="swagger-ui" class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"></div>
+    </div>
+
+    <!-- Swagger UI JavaScript -->
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
+    <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
+    
+    <script>
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: '{{ openapi_url }}',
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                defaultModelsExpandDepth: 1,
+                defaultModelExpandDepth: 1,
+                docExpansion: "list",
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true,
+                tryItOutEnabled: true,
+                requestInterceptor: function(request) {
+                    // Add custom headers if needed
+                    request.headers['X-Requested-With'] = 'SwaggerUI';
+                    return request;
+                },
+                responseInterceptor: function(response) {
+                    // Handle responses if needed
+                    return response;
+                }
+            });
+            
+            // Add some custom styling after UI loads
+            setTimeout(() => {
+                // Hide the Swagger UI logo/link
+                const topbar = document.querySelector('.swagger-ui .topbar');
+                if (topbar) {
+                    const logo = topbar.querySelector('.topbar-wrapper a');
+                    if (logo) {
+                        logo.style.display = 'none';
+                    }
+                }
+                
+                // Add custom info section styling
+                const info = document.querySelector('.swagger-ui .info');
+                if (info) {
+                    info.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
+                    info.style.padding = '2rem';
+                    info.style.borderRadius = '12px';
+                    info.style.border = '1px solid #e2e8f0';
+                    info.style.marginBottom = '2rem';
+                }
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

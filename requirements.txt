@@ -1,0 +1,51 @@
+# Core dependencies
+fastapi
+uvicorn[standard]
+pydantic
+sqlalchemy
+alembic
+psycopg2-binary
+redis
+celery
+httpx
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+python-dotenv
+jinja2
+
+# Database
+asyncpg
+aiosqlite
+databases[postgresql]
+
+# Azure AI Inference SDK (GitHub Models)
+azure-ai-inference
+azure-core
+azure-identity
+
+# AI/ML
+tiktoken
+
+# Testing
+pytest
+pytest-asyncio
+pytest-cov
+httpx
+
+# Monitoring & Logging
+prometheus-client
+structlog
+
+# Security
+cryptography
+pyjwt
+
+# Development
+black
+isort
+flake8
+mypy
+
+# Documentation
+pydantic-settings

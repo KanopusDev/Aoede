@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} - API Reference</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Custom ReDoc Styling */
+        redoc {
+            --redoc-font-family: 'Inter', sans-serif;
+            --redoc-color-primary: #667eea;
+            --redoc-color-primary-dark: #5a67d8;
+            --redoc-color-primary-light: #a3bffa;
+            --redoc-color-text-primary: #1a202c;
+            --redoc-color-text-secondary: #4a5568;
+            --redoc-color-border: #e2e8f0;
+            --redoc-color-border-dark: #cbd5e0;
+            --redoc-color-success: #10b981;
+            --redoc-color-error: #ef4444;
+            --redoc-color-warning: #f59e0b;
+            --redoc-code-background-color: #f7fafc;
+            --redoc-code-border-color: #e2e8f0;
+        }
+        
+        .custom-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.8); }
+        }
+        
+        /* Override ReDoc menu styling */
+        .menu-content .menu-item-header {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+            border-radius: 8px !important;
+            margin-bottom: 8px !important;
+        }
+        
+        .menu-content .menu-item-header:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+        
+        /* Custom redoc container */
+        #redoc-container {
+            margin-top: 0;
+        }
+        
+        /* Hide default redoc logo */
+        .redoc-logo {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Custom Header -->
+    <div class="custom-header relative overflow-hidden">
+        <!-- Background Elements -->
+        <div class="absolute inset-0 overflow-hidden pointer-events-none">
+            <div class="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-white opacity-10 floating"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-white opacity-10 floating" style="animation-delay: -1s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white opacity-5 floating" style="animation-delay: -2s;"></div>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center pulse-glow">
+                        <i class="fas fa-book text-3xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold mb-2">{{ title }}</h1>
+                        <p class="text-xl text-white/90">Comprehensive API Reference</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200">
+                        <i class="fas fa-home mr-2"></i>
+                        <span class="font-medium">Back to App</span>
+                    </a>
+                    <a href="/api/docs" class="flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200">
+                        <i class="fas fa-code mr-2"></i>
+                        <span class="font-medium">Swagger UI</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- API Information -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">REST</div>
+                        <div class="text-sm text-white/80">API Architecture</div>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">JSON</div>
+                        <div class="text-sm text-white/80">Data Format</div>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">OAuth</div>
+                        <div class="text-sm text-white/80">Authentication</div>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">v1.0</div>
+                        <div class="text-sm text-white/80">Current Version</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Documentation Features -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <!-- Feature 1 -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-rocket text-blue-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Fast & Reliable</h3>
+                <p class="text-gray-600 text-sm">
+                    High-performance API endpoints with enterprise-grade reliability and automatic error handling.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-shield-alt text-green-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Secure by Design</h3>
+                <p class="text-gray-600 text-sm">
+                    Built-in security features including rate limiting, authentication, and comprehensive validation.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
+                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                    <i class="fas fa-brain text-purple-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-900 mb-2">AI-Powered</h3>
+                <p class="text-gray-600 text-sm">
+                    Advanced AI capabilities with multiple model support and intelligent code generation.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ReDoc Container -->
+    <div id="redoc-container"></div>
+
+    <!-- ReDoc JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
+    
+    <script>
+        // Initialize ReDoc
+        Redoc.init('{{ openapi_url }}', {
+            scrollYOffset: 0,
+            hideDownloadButton: false,
+            disableSearch: false,
+            expandResponses: "200,201",
+            requiredPropsFirst: true,
+            sortPropsAlphabetically: true,
+            showExtensions: true,
+            hideHostname: false,
+            hideSchemaPattern: false,
+            expandSingleSchemaField: true,
+            simpleOneOfTypeLabel: true,
+            menuToggle: true,
+            nativeScrollbars: false,
+            theme: {
+                colors: {
+                    primary: {
+                        main: '#667eea'
+                    },
+                    success: {
+                        main: '#10b981'
+                    },
+                    error: {
+                        main: '#ef4444'
+                    },
+                    warning: {
+                        main: '#f59e0b'
+                    },
+                    gray: {
+                        50: '#f9fafb',
+                        100: '#f3f4f6'
+                    }
+                },
+                typography: {
+                    fontSize: '14px',
+                    lineHeight: '1.5em',
+                    fontFamily: 'Inter, sans-serif',
+                    smoothing: 'antialiased',
+                    optimizeSpeed: false,
+                    headings: {
+                        fontFamily: 'Inter, sans-serif',
+                        fontWeight: '600'
+                    },
+                    code: {
+                        fontSize: '13px',
+                        fontFamily: 'Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                        lineHeight: '1.4em',
+                        backgroundColor: '#f7fafc',
+                        color: '#1a202c'
+                    }
+                },
+                menu: {
+                    backgroundColor: '#ffffff',
+                    textColor: '#1a202c',
+                    activeTextColor: '#667eea',
+                    groupItems: {
+                        backgroundColor: '#f8fafc'
+                    },
+                    level1Items: {
+                        backgroundColor: '#ffffff',
+                        textColor: '#1a202c'
+                    }
+                },
+                rightPanel: {
+                    backgroundColor: '#1a202c',
+                    textColor: '#ffffff'
+                }
+            }
+        }, document.getElementById('redoc-container'));
+        
+        // Add custom styling after ReDoc loads
+        setTimeout(() => {
+            // Custom menu styling
+            const menuItems = document.querySelectorAll('[data-level="1"]');
+            menuItems.forEach(item => {
+                item.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
+                item.style.borderRadius = '8px';
+                item.style.marginBottom = '8px';
+                item.style.transition = 'all 0.2s ease';
+                
+                item.addEventListener('mouseenter', () => {
+                    item.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    item.style.color = 'white';
+                });
+                
+                item.addEventListener('mouseleave', () => {
+                    if (!item.classList.contains('active')) {
+                        item.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
+                        item.style.color = '#1a202c';
+                    }
+                });
+            });
+            
+            // Add custom styling to operation badges
+            const operationBadges = document.querySelectorAll('.operation-type');
+            operationBadges.forEach(badge => {
+                badge.style.borderRadius = '6px';
+                badge.style.fontWeight = '600';
+                badge.style.fontSize = '11px';
+                badge.style.padding = '4px 8px';
+            });
+            
+        }, 2000);
+    </script>
+</body>
+</html>
