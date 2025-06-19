@@ -1,4 +1,4 @@
-<div align="center">
+<div allign="center">
 
 # 🎵 Aoede - Enterprise AI No-Code Agent
 
@@ -35,22 +35,22 @@ To democratize AI development by providing enterprise-grade tools that enable an
 
 ## 🚀 Key Features
 
-<div align="center">
+<div allign="center">
 <table>
 <tr>
-<td align="center" width="33%">
+<td allign="center" width="33%">
 
 ### 🧠 **AI-Powered Intelligence**
 Multi-model AI integration with GitHub's latest models including GPT-4, Codestral, and Cohere for comprehensive code generation and analysis.
 
 </td>
-<td align="center" width="33%">
+<td allign="center" width="33%">
 
 ### 🔧 **No-Code Platform**
 Intuitive drag-and-drop interface enabling anyone to build sophisticated AI workflows without programming knowledge.
 
 </td>
-<td align="center" width="33%">
+<td allign="center" width="33%">
 
 ### 🛡️ **Enterprise Security**
 Bank-grade security with comprehensive audit logging, RBAC, and compliance with SOC2, GDPR, and HIPAA standards.
@@ -58,19 +58,19 @@ Bank-grade security with comprehensive audit logging, RBAC, and compliance with 
 </td>
 </tr>
 <tr>
-<td align="center">
+<td allign="center">
 
 ### ⚡ **Real-Time Collaboration**
 WebSocket-based live updates enabling teams to collaborate on AI projects in real-time with instant synchronization.
 
 </td>
-<td align="center">
+<td allign="center">
 
 ### 🔄 **Automated Testing**
 Intelligent iterative testing cycles with automatic error detection, resolution, and continuous validation of generated code.
 
 </td>
-<td align="center">
+<td allign="center">
 
 ### 📊 **Advanced Analytics**
 Comprehensive monitoring and analytics dashboard with detailed insights into AI model performance and usage patterns.
@@ -95,10 +95,10 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 
 ## 🛠️ **Technology Stack**
 
-<div align="center">
+<div allign="center">
 <table>
 <tr>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### **Backend**
 ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
@@ -106,7 +106,7 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-323232?style=for-the-badge&logo=sqlalchemy&logoColor=red)
 
 </td>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### **Frontend**
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
@@ -114,7 +114,7 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 
 </td>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### **Database**
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
@@ -122,7 +122,7 @@ Comprehensive monitoring and analytics dashboard with detailed insights into AI 
 ![SQLite](https://img.shields.io/badge/sqlite-%2307405e.svg?style=for-the-badge&logo=sqlite&logoColor=white)
 
 </td>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### **DevOps**
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
@@ -224,7 +224,7 @@ kubectl port-forward svc/aoede-frontend 8000:80 -n aoede
 
 ## 📈 **Development Progress**
 
-<div align="center">
+<div allign="center">
 
 ### 🎯 **Project Completion: 100%**
 
@@ -259,10 +259,10 @@ kubectl port-forward svc/aoede-frontend 8000:80 -n aoede
 
 ## 📚 **Documentation & Resources**
 
-<div align="center">
+<div allign="center">
 <table>
 <tr>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### 📖 **User Guide**
 [Getting Started](https://aoede.kanopus.org/docs/getting-started)<br>
@@ -270,7 +270,7 @@ kubectl port-forward svc/aoede-frontend 8000:80 -n aoede
 [Best Practices](https://aoede.kanopus.org/docs/best-practices)
 
 </td>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### 🔧 **Developer Docs**
 [API Reference](https://aoede.kanopus.org/docs/api)<br>
@@ -278,7 +278,7 @@ kubectl port-forward svc/aoede-frontend 8000:80 -n aoede
 [Integration Guide](https://aoede.kanopus.org/docs/integrations)
 
 </td>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### 🏗️ **Architecture**
 [System Design](https://aoede.kanopus.org/docs/architecture)<br>
@@ -286,7 +286,7 @@ kubectl port-forward svc/aoede-frontend 8000:80 -n aoede
 [Deployment Guide](https://aoede.kanopus.org/docs/deployment)
 
 </td>
-<td align="center" width="25%">
+<td allign="center" width="25%">
 
 ### 🤝 **Community**
 [Contributing Guide](CONTRIBUTING.md)<br>
@@ -331,16 +331,16 @@ Found a bug? Please [open an issue](https://github.com/Kanopusdev/Aoede/issues) 
 
 ## 📄 **License & Legal**
 
-<div align="center">
+<div allign="center">
 
 ### 📜 **License Information**
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ### 🏢 **Enterprise Support**
-For enterprise licensing, support, and custom solutions, contact us at [enterprise@kanopus.org](mailto:enterprise@kanopus.org)
+For enterprise licensing, support, and custom solutions, contact us at [enterprise@kanopus.org](mailto:contact@kanopus.org)
 
 ### 🔒 **Security**
-For security vulnerabilities, please email [security@kanopus.org](mailto:security@kanopus.org) instead of using the issue tracker.
+For security vulnerabilities, please email [security@kanopus.org](mailto:contact@kanopus.org) instead of using the issue tracker.
 
 </div>
 
@@ -348,7 +348,7 @@ For security vulnerabilities, please email [security@kanopus.org](mailto:securit
 
 ## 🙏 **Acknowledgments**
 
-<div align="center">
+<div allign="center">
 
 ### 💝 **Special Thanks**
 - **GitHub** for providing world-class AI models through GitHub Models
@@ -365,7 +365,7 @@ For security vulnerabilities, please email [security@kanopus.org](mailto:securit
 
 ---
 
-<div align="center">
+<div allign="center">
 
 ### 🌟 **Star the Project**
 If you find Aoede useful, please consider giving it a star! ⭐
