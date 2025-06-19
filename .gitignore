@@ -193,7 +193,6 @@ api_key*
 certificate*
 
 # AI/ML models and data
-models/
 data/
 datasets/
 *.model
