@@ -1,521 +1,452 @@
 /**
- * API Client Module
- * Handles all communication with the backend API
+ * Enterprise API Service Module
+ * Handles all HTTP communications with the Aoede backend
  */
-
-class APIClient {
+class APIService {
     constructor() {
         this.baseURL = window.location.origin;
-        this.apiVersion = 'v1';
-        this.baseAPIURL = `${this.baseURL}/api/${this.apiVersion}`;
-        this.token = localStorage.getItem('auth_token');
-        this.requestId = 0;
-    }
-
-    /**
-     * Generate unique request ID for tracking
-     */
-    generateRequestId() {
-        return `req_${Date.now()}_${++this.requestId}`;
-    }
-
-    /**
-     * Default headers for API requests
-     */
-    getDefaultHeaders() {
-        const headers = {
+        this.apiVersion = '/api/v1';
+        this.authToken = localStorage.getItem('auth_token');
+        this.refreshToken = localStorage.getItem('refresh_token');
+        this.isProduction = true;
+        
+        this.defaultHeaders = {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-Request-ID': this.generateRequestId()
         };
 
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
-        }
+        this.requestInterceptors = [];
+        this.responseInterceptors = [];
 
-        return headers;
+        // Setup automatic token refresh and request retry
+        this.setupTokenRefresh();
+        this.setupRequestRetry();
+        this.setupErrorHandling();
     }
 
     /**
-     * Generic API request method
+     * Set authentication token with secure storage
      */
-    async request(endpoint, options = {}) {
-        const url = `${this.baseAPIURL}${endpoint}`;
-        const config = {
-            headers: this.getDefaultHeaders(),
-            ...options
-        };
+    setAuthToken(token) {
+        this.authToken = token;
+        if (token) {
+            localStorage.setItem('auth_token', token);
+            
+            // Set token expiry monitoring
+            try {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                if (payload.exp) {
+                    const expiryTime = payload.exp * 1000 - 60000; // 1 minute before expiry
+                    setTimeout(() => {
+                        this.refreshAuthToken().catch(() => {
+                            this.clearAuth();
+                        });
+                    }, expiryTime - Date.now());
+                }
+            } catch (e) {
+                // Invalid token format, clear it
+                this.clearAuth();
+            }
+        }
+    }
+
+    /**
+     * Clear authentication with cleanup
+     */
+    clearAuth() {
+        this.authToken = null;
+        this.refreshToken = null;
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('refresh_token');
+        
+        // Dispatch auth cleared event
+        window.dispatchEvent(new CustomEvent('auth:cleared'));
+    }
+
+    /**
+     * Get default headers with authentication
+     */
+    getHeaders(customHeaders = {}) {
+        const headers = Object.assign({}, this.defaultHeaders, customHeaders);
+        
+        if (this.authToken) {
+            headers['Authorization'] = 'Bearer ' + this.authToken;
+        }
+        
+        return headers;
+    }    /**
+     * Setup automatic token refresh with improved error handling
+     */
+    setupTokenRefresh() {
+        var self = this;
+        setInterval(function() {
+            if (self.refreshToken && self.authToken) {
+                self.refreshAuthToken().catch(function(error) {
+                    self.handleError('Token refresh failed', error);
+                    self.clearAuth();
+                    window.dispatchEvent(new CustomEvent('auth:logout'));
+                });
+            }
+        }, 15 * 60 * 1000); // Refresh every 15 minutes
+    }
+
+    /**
+     * Setup request retry mechanism
+     */
+    setupRequestRetry() {
+        this.maxRetries = 3;
+        this.retryDelay = 1000; // 1 second base delay
+    }
+
+    /**
+     * Setup centralized error handling
+     */
+    setupErrorHandling() {
+        window.addEventListener('unhandledrejection', (event) => {
+            if (event.reason instanceof APIError) {
+                this.handleAPIError(event.reason);
+                event.preventDefault();
+            }
+        });
+    }
+
+    /**
+     * Handle API errors centrally
+     */
+    handleAPIError(error) {
+        if (error.isAuthError) {
+            this.clearAuth();
+            window.dispatchEvent(new CustomEvent('api:error', {
+                detail: { ...error, isAuthError: true }
+            }));
+        } else if (error.isNetworkError) {
+            window.dispatchEvent(new CustomEvent('api:error', {
+                detail: { ...error, isNetworkError: true }
+            }));
+        } else {
+            window.dispatchEvent(new CustomEvent('api:error', {
+                detail: error
+            }));
+        }
+    }
+
+    /**
+     * Enhanced error handling
+     */
+    handleError(message, error) {
+        if (this.isProduction) {
+            // Log error to monitoring service
+            this.logError(message, error);
+        }
+    }
+
+    logError(message, error) {
+        // Send to error logging service
+        if (typeof this.logErrorToService === 'function') {
+            this.logErrorToService({
+                message: message,
+                error: error ? error.toString() : null,
+                timestamp: new Date().toISOString(),
+                url: window.location.href,
+                userAgent: navigator.userAgent
+            }).catch(() => {
+                // Silently fail if logging service unavailable
+            });
+        }
+    }    /**
+     * Core HTTP request method with retry logic and enhanced error handling
+     */
+    async request(endpoint, options, retryCount = 0) {
+        options = options || {};
+        const url = this.baseURL + this.apiVersion + endpoint;
+        const config = Object.assign({
+            method: 'GET',
+            headers: this.getHeaders(options.headers)
+        }, options);
+
+        // Apply request interceptors
+        for (var i = 0; i < this.requestInterceptors.length; i++) {
+            await this.requestInterceptors[i](config);
+        }
 
         try {
-            console.log(`API Request: ${config.method || 'GET'} ${url}`);
-            
             const response = await fetch(url, config);
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail || `HTTP error! status: ${response.status}`);
+            
+            // Apply response interceptors
+            for (var i = 0; i < this.responseInterceptors.length; i++) {
+                await this.responseInterceptors[i](response);
             }
 
-            console.log(`API Response: ${response.status}`, data);
-            return data;
+            if (!response.ok) {
+                const errorData = await response.json().catch(function() { return null; });
+                
+                // Handle specific error cases
+                if (response.status === 401 && this.authToken) {
+                    // Try to refresh token
+                    try {
+                        await this.refreshAuthToken();
+                        // Retry the original request
+                        return this.request(endpoint, options, retryCount);
+                    } catch (refreshError) {
+                        this.clearAuth();
+                        throw new APIError('Authentication failed', 401, errorData);
+                    }
+                }
+                
+                throw new APIError(
+                    errorData?.message || `HTTP ${response.status}: ${response.statusText}`,
+                    response.status,
+                    errorData
+                );
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+                return await response.json();
+            }
+            
+            return await response.text();
         } catch (error) {
-            console.error(`API Error for ${endpoint}:`, error);
-            throw error;
+            if (error instanceof APIError) {
+                throw error;
+            }
+            
+            // Retry on network errors
+            if (retryCount < this.maxRetries && this.isRetryableError(error)) {
+                await this.delay(this.retryDelay * Math.pow(2, retryCount)); // Exponential backoff
+                return this.request(endpoint, options, retryCount + 1);
+            }
+            
+            throw new APIError('Network request failed', 0, { originalError: error.message });
         }
+    }
+
+    /**
+     * Check if error is retryable
+     */
+    isRetryableError(error) {
+        return error.name === 'TypeError' || // Network error
+               error.name === 'AbortError' || // Request aborted
+               (error.status >= 500 && error.status < 600); // Server errors
+    }
+
+    /**
+     * Delay utility for retry mechanism
+     */
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     /**
      * GET request
      */
-    async get(endpoint, params = {}) {
-        const url = new URL(`${this.baseAPIURL}${endpoint}`);
-        Object.keys(params).forEach(key => {
-            if (params[key] !== undefined && params[key] !== null) {
-                url.searchParams.append(key, params[key]);
-            }
-        });
-
-        return this.request(endpoint + (url.search || ''), {
-            method: 'GET'
-        });
+    async get(endpoint, params) {
+        params = params || {};
+        const searchParams = new URLSearchParams(params);
+        const queryString = searchParams.toString();
+        const url = queryString ? endpoint + '?' + queryString : endpoint;
+        
+        return this.request(url);
     }
 
     /**
      * POST request
      */
-    async post(endpoint, data = {}) {
-        return this.request(endpoint, {
+    async post(endpoint, data, options) {
+        options = options || {};
+        return this.request(endpoint, Object.assign({
             method: 'POST',
-            body: JSON.stringify(data)
-        });
+            body: data ? JSON.stringify(data) : null
+        }, options));
     }
 
     /**
      * PUT request
      */
-    async put(endpoint, data = {}) {
-        return this.request(endpoint, {
+    async put(endpoint, data, options) {
+        options = options || {};
+        return this.request(endpoint, Object.assign({
             method: 'PUT',
-            body: JSON.stringify(data)
-        });
+            body: data ? JSON.stringify(data) : null
+        }, options));
+    }
+
+    /**
+     * PATCH request
+     */
+    async patch(endpoint, data, options) {
+        options = options || {};
+        return this.request(endpoint, Object.assign({
+            method: 'PATCH',
+            body: data ? JSON.stringify(data) : null
+        }, options));
     }
 
     /**
      * DELETE request
      */
-    async delete(endpoint) {
-        return this.request(endpoint, {
+    async delete(endpoint, options) {
+        options = options || {};
+        return this.request(endpoint, Object.assign({
             method: 'DELETE'
+        }, options));
+    }
+
+    // Authentication endpoints
+    async register(userData) {
+        return this.post('/auth/register', userData);
+    }
+
+    async login(credentials) {
+        const response = await this.post('/auth/login', credentials);
+        
+        if (response.access_token) {
+            this.setAuthToken(response.access_token);
+            if (response.refresh_token) {
+                this.refreshToken = response.refresh_token;
+                localStorage.setItem('refresh_token', response.refresh_token);
+            }
+        }
+        
+        return response;
+    }
+
+    async logout() {
+        try {
+            await this.post('/auth/logout');        } catch (error) {
+            // Silent logout failure - authentication is cleared anyway
+        }finally {
+            this.clearAuth();
+        }
+    }
+
+    async refreshAuthToken() {
+        if (!this.refreshToken) {
+            throw new Error('No refresh token available');
+        }
+
+        const response = await this.post('/auth/refresh', {
+            refresh_token: this.refreshToken
         });
+
+        if (response.access_token) {
+            this.setAuthToken(response.access_token);
+        }
+
+        return response;
     }
 
-    // ============ PROJECT API METHODS ============
-
-    /**
-     * Get all projects
-     */
-    async getProjects(skip = 0, limit = 100) {
-        return this.get('/projects', { skip, limit });
+    async getCurrentUser() {
+        return this.get('/auth/me');
     }
 
-    /**
-     * Get project by ID
-     */
+    async updateProfile(profileData) {
+        return this.put('/auth/profile', profileData);
+    }
+
+    // Project endpoints
+    async getProjects(params) {
+        return this.get('/projects', params);
+    }
+
     async getProject(projectId) {
-        return this.get(`/projects/${projectId}`);
+        return this.get('/projects/' + projectId);
     }
 
-    /**
-     * Create new project
-     */
     async createProject(projectData) {
         return this.post('/projects', projectData);
     }
 
-    /**
-     * Update project
-     */
     async updateProject(projectId, projectData) {
-        return this.put(`/projects/${projectId}`, projectData);
+        return this.put('/projects/' + projectId, projectData);
     }
 
-    /**
-     * Delete project
-     */
     async deleteProject(projectId) {
-        return this.delete(`/projects/${projectId}`);
+        return this.delete('/projects/' + projectId);
     }
 
-    // ============ CODE GENERATION API METHODS ============
-
-    /**
-     * Generate code
-     */
+    // Code generation endpoints
     async generateCode(generationData) {
         return this.post('/generate/code', generationData);
     }
 
-    /**
-     * Get generation by ID
-     */
+    async validateCode(codeData) {
+        return this.post('/generate/validate', codeData);
+    }
+
+    async getGenerationHistory(params) {
+        return this.get('/generate/history', params);
+    }
+
     async getGeneration(generationId) {
-        return this.get(`/generate/${generationId}`);
+        return this.get('/generate/' + generationId);
     }
 
-    /**
-     * Get project generations
-     */
-    async getProjectGenerations(projectId, skip = 0, limit = 50) {
-        return this.get(`/generate/project/${projectId}`, { skip, limit });
-    }
-
-    /**
-     * Update generation
-     */
-    async updateGeneration(generationId, updateData) {
-        return this.put(`/generate/${generationId}`, updateData);
-    }
-
-    /**
-     * Delete generation
-     */
-    async deleteGeneration(generationId) {
-        return this.delete(`/generate/${generationId}`);
-    }
-
-    // ============ TESTING API METHODS ============
-
-    /**
-     * Execute code tests
-     */
-    async executeTests(testData) {
-        return this.post('/test/execute', testData);
-    }
-
-    /**
-     * Validate code
-     */
-    async validateCode(validationData) {
-        return this.post('/test/validate', validationData);
-    }
-
-    /**
-     * Generate fixes for code
-     */
-    async generateFixes(fixData) {
-        return this.post('/test/fix', fixData);
-    }
-
-    /**
-     * Get test results
-     */
-    async getTestResults(generationId) {
-        return this.get(`/test/results/${generationId}`);
-    }
-
-    /**
-     * Get test metrics
-     */
-    async getTestMetrics(projectId, days = 7) {
-        return this.get(`/test/metrics/${projectId}`, { days });
-    }
-
-    // ============ AI MODELS API METHODS ============
-
-    /**
-     * Get available models
-     */
-    async getModels() {
+    // AI models endpoints
+    async getAIModels() {
         return this.get('/models');
     }
 
-    /**
-     * Get model status
-     */
-    async getModelStatus() {
-        return this.get('/models/status');
+    async testModel(modelData) {
+        return this.post('/models/test', modelData);
     }
 
-    /**
-     * Get model usage metrics
-     */
-    async getModelUsage(modelName = null, days = 7) {
-        const params = { days };
-        if (modelName) params.model_name = modelName;
+    async getModelUsage(params) {
         return this.get('/models/usage', params);
     }
 
-    /**
-     * Test model health
-     */
-    async testModelHealth(modelName) {
-        return this.post('/models/health', { model_name: modelName });
+    // Testing endpoints
+    async runTests(testData) {
+        return this.post('/testing/run', testData);
     }
 
-    // ============ HEALTH API METHODS ============
+    async getTestResults(testId) {
+        return this.get('/testing/results/' + testId);
+    }
 
-    /**
-     * Get system health
-     */
-    async getHealth() {
+    async getTestHistory(params) {
+        return this.get('/testing/history', params);
+    }
+
+    // Health endpoints
+    async healthCheck() {
         return this.get('/health');
     }
 
-    /**
-     * Get detailed health info
-     */
-    async getHealthDetailed() {
-        return this.get('/health/detailed');
-    }
-
-    // ============ WEBSOCKET METHODS ============
-
-    /**
-     * Connect to WebSocket for real-time updates
-     */
-    connectWebSocket(endpoint, onMessage, onError = null, onClose = null) {
-        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsURL = `${wsProtocol}//${window.location.host}/ws${endpoint}`;
-        
-        console.log(`Connecting to WebSocket: ${wsURL}`);
-        
-        const ws = new WebSocket(wsURL);
-        
-        ws.onopen = () => {
-            console.log(`WebSocket connected: ${endpoint}`);
-        };
-        
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                onMessage(data);
-            } catch (error) {
-                console.error('WebSocket message parse error:', error);
-                if (onError) onError(error);
-            }
-        };
-        
-        ws.onerror = (error) => {
-            console.error(`WebSocket error on ${endpoint}:`, error);
-            if (onError) onError(error);
-        };
-        
-        ws.onclose = (event) => {
-            console.log(`WebSocket closed: ${endpoint}`, event.code, event.reason);
-            if (onClose) onClose(event);
-        };
-        
-        return ws;
-    }
-
-    /**
-     * Connect to project status WebSocket
-     */
-    connectProjectStatus(projectId, onMessage, onError, onClose) {
-        return this.connectWebSocket(
-            `/project/${projectId}/status`,
-            onMessage,
-            onError,
-            onClose
-        );
-    }
-
-    /**
-     * Connect to generation progress WebSocket
-     */
-    connectGenerationProgress(onMessage, onError, onClose) {
-        return this.connectWebSocket(
-            '/generation/progress',
-            onMessage,
-            onError,
-            onClose
-        );
-    }
-
-    /**
-     * Connect to test results WebSocket
-     */
-    connectTestResults(onMessage, onError, onClose) {
-        return this.connectWebSocket(
-            '/testing/results',
-            onMessage,
-            onError,
-            onClose
-        );
-    }
-
-    // ============ FILE UPLOAD METHODS ============
-
-    /**
-     * Upload file
-     */
-    async uploadFile(file, endpoint = '/upload') {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const headers = {
-            'X-Request-ID': this.generateRequestId()
-        };
-
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
-        }
-
-        try {
-            const response = await fetch(`${this.baseAPIURL}${endpoint}`, {
-                method: 'POST',
-                headers: headers,
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.detail || `HTTP error! status: ${response.status}`);
-            }
-
-            return data;
-        } catch (error) {
-            console.error('File upload error:', error);
-            throw error;
-        }
-    }
-
-    // ============ BULK OPERATIONS ============
-
-    /**
-     * Bulk delete projects
-     */
-    async bulkDeleteProjects(projectIds) {
-        return this.post('/projects/bulk-delete', { project_ids: projectIds });
-    }
-
-    /**
-     * Bulk generate code
-     */
-    async bulkGenerateCode(generationRequests) {
-        return this.post('/generate/bulk', { requests: generationRequests });
-    }
-
-    // ============ EXPORT METHODS ============
-
-    /**
-     * Export project data
-     */
-    async exportProject(projectId, format = 'json') {
-        return this.get(`/projects/${projectId}/export`, { format });
-    }
-
-    /**
-     * Export generation code
-     */
-    async exportGeneration(generationId, format = 'zip') {
-        return this.get(`/generate/${generationId}/export`, { format });
-    }
-
-    // ============ SEARCH METHODS ============
-
-    /**
-     * Search projects
-     */
-    async searchProjects(query, filters = {}) {
-        return this.get('/projects/search', { q: query, ...filters });
-    }
-
-    /**
-     * Search generations
-     */
-    async searchGenerations(query, filters = {}) {
-        return this.get('/generate/search', { q: query, ...filters });
-    }
-
-    // ============ ANALYTICS METHODS ============
-
-    /**
-     * Get usage analytics
-     */
-    async getUsageAnalytics(startDate, endDate, granularity = 'day') {
-        return this.get('/analytics/usage', {
-            start_date: startDate,
-            end_date: endDate,
-            granularity
-        });
-    }
-
-    /**
-     * Get performance metrics
-     */
-    async getPerformanceMetrics(metricType = 'all', days = 7) {
-        return this.get('/analytics/performance', {
-            metric_type: metricType,
-            days
-        });
-    }
-
-    // ============ UTILITY METHODS ============
-
-    /**
-     * Set authentication token
-     */
-    setToken(token) {
-        this.token = token;
-        if (token) {
-            localStorage.setItem('auth_token', token);
-        } else {
-            localStorage.removeItem('auth_token');
-        }
-    }
-
-    /**
-     * Clear authentication token
-     */
-    clearToken() {
-        this.setToken(null);
-    }
-
-    /**
-     * Check if authenticated
-     */
-    isAuthenticated() {
-        return !!this.token;
-    }
-
-    /**
-     * Handle API errors globally
-     */
-    handleError(error, context = '') {
-        console.error(`API Error ${context}:`, error);
-        
-        // Handle specific error types
-        if (error.message.includes('401')) {
-            this.clearToken();
-            window.location.reload();
-        } else if (error.message.includes('429')) {
-            // Rate limiting
-            console.warn('Rate limit exceeded, please try again later');
-        } else if (error.message.includes('500')) {
-            console.error('Server error, please try again later');
-        }
-        
-        return error;
+    async getMetrics() {
+        return this.get('/health/metrics');
     }
 }
 
-// Create global API client instance
-console.log('Creating API client...');
-const API = new APIClient();
-window.API = API;
-window.apiClient = API; // Keep backward compatibility
-console.log('API client created:', typeof API, typeof window.API);
+/**
+ * Custom API Error class
+ */
+class APIError extends Error {
+    constructor(message, status, data) {
+        super(message);
+        this.name = 'APIError';
+        this.status = status || 0;
+        this.data = data || null;
+    }
 
-// Double-check API is available
-if (typeof window.API === 'undefined') {
-    console.error('Failed to create global API object');
-} else {
-    console.log('Global API object created successfully');
+    get isNetworkError() {
+        return this.status === 0;
+    }
+
+    get isClientError() {
+        return this.status >= 400 && this.status < 500;
+    }
+
+    get isServerError() {
+        return this.status >= 500;
+    }
+
+    get isAuthError() {
+        return this.status === 401 || this.status === 403;
+    }
 }
 
-// Export for module systems
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = APIClient;
-}
+// Create global instances
+window.APIService = APIService;
+window.APIError = APIError;
+window.api = new APIService();

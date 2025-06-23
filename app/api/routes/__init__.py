@@ -2,12 +2,18 @@
 API Routes for Aoede application
 """
 from fastapi import APIRouter
-from app.api.routes import projects, code_generation, testing, ai_models, health, websocket
+from app.api.routes import projects, code_generation, testing, ai_models, health, websocket, auth
 
 # Create main API router
 api_router = APIRouter()
 
 # Include sub-routers
+api_router.include_router(
+    auth.router,
+    prefix="/auth",
+    tags=["Authentication"]
+)
+
 api_router.include_router(
     health.router,
     prefix="/health",

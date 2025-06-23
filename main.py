@@ -168,15 +168,48 @@ def custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
     
-    openapi_schema = get_openapi(
-        title=app.title,
-        version=app.version,
-        description=app.description,
-        routes=app.routes,
-        tags=tags_metadata
-    )
+    try:
+        # Try the newer FastAPI signature first
+        openapi_schema = get_openapi(
+            title=app.title,
+            version=app.version,
+            description=app.description,
+            routes=app.routes,
+        )
+    except TypeError:
+        # Fallback to older signature or simpler approach
+        try:
+            openapi_schema = get_openapi(
+                routes=app.routes,
+            )
+            # Manually set title, version, description
+            if "info" in openapi_schema:
+                openapi_schema["info"]["title"] = app.title
+                openapi_schema["info"]["version"] = app.version
+                openapi_schema["info"]["description"] = app.description
+        except Exception:
+            # Final fallback - create basic schema structure
+            openapi_schema = {
+                "openapi": "3.0.2",
+                "info": {
+                    "title": app.title,
+                    "version": app.version,
+                    "description": app.description
+                },
+                "paths": {}
+            }
+    
+    # Ensure we have a valid schema structure
+    if not isinstance(openapi_schema, dict):
+        openapi_schema = {"openapi": "3.0.2", "info": {"title": app.title, "version": app.version}}
+    
+    # Add tags metadata manually
+    openapi_schema["tags"] = tags_metadata
     
     # Add additional OpenAPI metadata
+    if "info" not in openapi_schema:
+        openapi_schema["info"] = {}
+    
     openapi_schema["info"]["x-logo"] = {
         "url": "https://aoede.kanopus.org/static/favicon.ico",
         "altText": "Aoede Logo"
@@ -185,6 +218,9 @@ def custom_openapi():
     openapi_schema["info"]["termsOfService"] = "https://aoede.kanopus.org/terms"
     
     # Add security schemes
+    if "components" not in openapi_schema:
+        openapi_schema["components"] = {}
+    
     openapi_schema["components"]["securitySchemes"] = {
         "ApiKeyAuth": {
             "type": "apiKey",
@@ -232,6 +268,12 @@ templates = Jinja2Templates(directory="app/templates")
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")
 
+# Also include API routes without version prefix for compatibility
+app.include_router(api_router, prefix="/api")
+
+# Also include API routes without version prefix for compatibility
+app.include_router(api_router, prefix="/api")
+
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
@@ -240,25 +282,6 @@ async def root(request: Request):
         "index.html", 
         {"request": request, "title": "Aoede - AI No-Code Agent"}
     )
-
-
-@app.get("/health", tags=["Health"])
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "timestamp": time.time(),
-        "version": "1.0.0",
-        "environment": settings.ENVIRONMENT,
-        "ai_service_initialized": ai_model_service.initialized
-    }
-
-
-@app.get("/metrics", tags=["Monitoring"])
-async def metrics():
-    """Prometheus metrics endpoint"""
-    from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
-    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 @app.get("/docs", response_class=HTMLResponse, include_in_schema=False)
@@ -287,30 +310,29 @@ async def custom_redoc_html(request: Request):
     )
 
 
-@app.get("/api/docs", response_class=HTMLResponse, include_in_schema=False)
-async def api_swagger_ui_html(request: Request):
-    """API-specific Swagger UI documentation page"""
-    return templates.TemplateResponse(
-        "docs.html", 
-        {
-            "request": request, 
-            "title": "Aoede API Documentation",
-            "openapi_url": app.openapi_url or "/openapi.json"
-        }
-    )
+@app.get("/openapi.json")
+async def get_openapi():
+    """Return the OpenAPI schema as JSON"""
+    return custom_openapi()
 
 
-@app.get("/api/redoc", response_class=HTMLResponse, include_in_schema=False)
-async def api_redoc_html(request: Request):
-    """API-specific ReDoc documentation page"""
-    return templates.TemplateResponse(
-        "redoc.html", 
-        {
-            "request": request, 
-            "title": "Aoede API Reference",
-            "openapi_url": app.openapi_url or "/openapi.json"
-        }
-    )
+@app.get("/health", tags=["Health"])
+async def health_check():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": time.time(),
+        "version": "1.0.0",
+        "environment": settings.ENVIRONMENT,
+        "ai_service_initialized": ai_model_service.initialized
+    }
+
+
+@app.get("/metrics", tags=["Monitoring"])
+async def metrics():
+    """Prometheus metrics endpoint"""
+    from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 
 if __name__ == "__main__":

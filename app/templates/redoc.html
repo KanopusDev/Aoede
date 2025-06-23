@@ -3,317 +3,635 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} - API Reference</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <title>Aoede API Reference - Interactive Documentation</title>
     
+    <!-- Meta Tags -->
+    <meta name="description" content="Interactive API reference for Aoede's enterprise AI code generation platform">
+    <meta name="keywords" content="API, reference, Aoede, AI, code generation, REST API, OpenAPI">
+    <meta name="author" content="Aoede Technologies">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/static/images/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/apple-touch-icon.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- ReDoc Styling -->
     <style>
-        body { 
-            font-family: 'Inter', sans-serif; 
-            margin: 0;
-            padding: 0;
+        /* Custom ReDoc Theme for Aoede */
+        :root {
+            --brand-primary: #2563eb;
+            --brand-primary-hover: #1d4ed8;
+            --brand-primary-light: #dbeafe;
+            --brand-secondary: #7c3aed;
+            --brand-accent: #06b6d4;
+            
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
         }
-        
-        /* Custom ReDoc Styling */
-        redoc {
-            --redoc-font-family: 'Inter', sans-serif;
-            --redoc-color-primary: #667eea;
-            --redoc-color-primary-dark: #5a67d8;
-            --redoc-color-primary-light: #a3bffa;
-            --redoc-color-text-primary: #1a202c;
-            --redoc-color-text-secondary: #4a5568;
-            --redoc-color-border: #e2e8f0;
-            --redoc-color-border-dark: #cbd5e0;
-            --redoc-color-success: #10b981;
-            --redoc-color-error: #ef4444;
-            --redoc-color-warning: #f59e0b;
-            --redoc-code-background-color: #f7fafc;
-            --redoc-code-border-color: #e2e8f0;
-        }
-        
-        .custom-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+        /* Custom header for branded experience */
+        .redoc-header {
+            background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-secondary) 100%);
             color: white;
             padding: 2rem 0;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
-        .floating {
-            animation: floating 3s ease-in-out infinite;
+
+        .redoc-header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+
+        .redoc-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s infinite;
+
+        .redoc-brand-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
         }
-        
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 5px rgba(102, 126, 234, 0.4); }
-            50% { box-shadow: 0 0 20px rgba(102, 126, 234, 0.8); }
+
+        .redoc-brand-text h1 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin: 0;
+            color: white;
         }
-        
-        /* Override ReDoc menu styling */
-        .menu-content .menu-item-header {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
-            border-radius: 8px !important;
-            margin-bottom: 8px !important;
+
+        .redoc-brand-text p {
+            font-size: 1rem;
+            margin: 0;
+            opacity: 0.9;
+            color: white;
         }
-        
-        .menu-content .menu-item-header:hover {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            color: white !important;
+
+        .redoc-nav {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
         }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+
+        .redoc-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.15s ease;
         }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 4px;
+
+        .redoc-nav a:hover {
+            opacity: 0.8;
         }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 4px;
+
+        .redoc-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background-color 0.15s ease;
         }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+
+        .redoc-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
-        
-        /* Custom redoc container */
-        #redoc-container {
+
+        /* Custom styles for ReDoc container */
+        .redoc-container {
             margin-top: 0;
         }
-        
-        /* Hide default redoc logo */
-        .redoc-logo {
-            display: none !important;
+
+        /* Override ReDoc default styles */
+        redoc {
+            --redoc-font-family: var(--font-family) !important;
+            --redoc-font-mono: var(--font-mono) !important;
+            --redoc-font-size: 14px !important;
+            --redoc-code-font-size: 13px !important;
+            
+            /* Colors */
+            --redoc-text-color: var(--gray-700) !important;
+            --redoc-border-color: var(--gray-200) !important;
+            --redoc-bg-color: var(--gray-50) !important;
+            
+            /* Primary colors */
+            --redoc-primary-color: var(--brand-primary) !important;
+            --redoc-primary-color-dark: var(--brand-primary-hover) !important;
+            
+            /* Code colors */
+            --redoc-code-bg-color: var(--gray-900) !important;
+            --redoc-code-text-color: var(--gray-100) !important;
+            
+            /* Success/Error colors */
+            --redoc-success-color: #059669 !important;
+            --redoc-error-color: #dc2626 !important;
+            --redoc-warning-color: #d97706 !important;
+            
+            /* Sidebar */
+            --redoc-sidebar-bg-color: white !important;
+            --redoc-sidebar-text-color: var(--gray-700) !important;
+            --redoc-sidebar-active-text-color: var(--brand-primary) !important;
+            
+            /* Panels */
+            --redoc-panel-bg-color: white !important;
+            --redoc-panel-border-color: var(--gray-200) !important;
+        }
+
+        /* Custom mobile responsiveness */
+        @media (max-width: 768px) {
+            .redoc-header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+                padding: 0 1rem;
+            }
+            
+            .redoc-nav {
+                gap: 1rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .redoc-brand {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Enhanced operation styling */
+        .redoc-wrap .operation-path {
+            border-radius: 12px !important;
+            margin: 1.5rem 0 !important;
+            overflow: hidden !important;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+            border: 1px solid var(--gray-200) !important;
+        }
+
+        .redoc-wrap .operation-path:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+            border-color: var(--brand-primary) !important;
+        }
+
+        /* HTTP method badges */
+        .redoc-wrap .http-verb {
+            font-weight: 700 !important;
+            font-size: 11px !important;
+            padding: 6px 12px !important;
+            border-radius: 6px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+        }
+
+        .redoc-wrap .http-verb.get {
+            background: #d1fae5 !important;
+            color: #065f46 !important;
+        }
+
+        .redoc-wrap .http-verb.post {
+            background: var(--brand-primary-light) !important;
+            color: #1e40af !important;
+        }
+
+        .redoc-wrap .http-verb.put {
+            background: #fef3c7 !important;
+            color: #92400e !important;
+        }
+
+        .redoc-wrap .http-verb.delete {
+            background: #fee2e2 !important;
+            color: #991b1b !important;
+        }
+
+        .redoc-wrap .http-verb.patch {
+            background: #ede9fe !important;
+            color: #7c3aed !important;
+        }
+
+        /* Enhanced code samples */
+        .redoc-wrap .redoc-json {
+            background: var(--gray-900) !important;
+            border-radius: 8px !important;
+            padding: 1.5rem !important;
+            margin: 1rem 0 !important;
+        }
+
+        /* Menu improvements */
+        .redoc-wrap .menu-content {
+            background: white !important;
+            border-right: 1px solid var(--gray-200) !important;
+            padding: 1rem 0 !important;
+        }
+
+        .redoc-wrap .menu-item {
+            padding: 0.75rem 1.5rem !important;
+            margin: 0 !important;
+            transition: all 0.15s ease !important;
+            border-radius: 0 !important;
+        }
+
+        .redoc-wrap .menu-item:hover {
+            background: var(--gray-50) !important;
+            color: var(--brand-primary) !important;
+        }
+
+        .redoc-wrap .menu-item.active {
+            background: var(--brand-primary-light) !important;
+            color: var(--brand-primary) !important;
+            border-right: 3px solid var(--brand-primary) !important;
+        }
+
+        /* Search box styling */
+        .redoc-wrap .search-box {
+            background: white !important;
+            border: 1px solid var(--gray-300) !important;
+            border-radius: 8px !important;
+            padding: 0.75rem 1rem !important;
+            margin: 1rem 1.5rem !important;
+            font-family: var(--font-family) !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .redoc-wrap .search-box:focus {
+            outline: none !important;
+            border-color: var(--brand-primary) !important;
+            box-shadow: 0 0 0 3px var(--brand-primary-light) !important;
+        }
+
+        /* Parameter tables */
+        .redoc-wrap .parameters-table {
+            border-radius: 8px !important;
+            overflow: hidden !important;
+            border: 1px solid var(--gray-200) !important;
+        }
+
+        .redoc-wrap .parameters-table th {
+            background: var(--gray-50) !important;
+            color: var(--gray-900) !important;
+            font-weight: 600 !important;
+            padding: 1rem 1.5rem !important;
+        }
+
+        .redoc-wrap .parameters-table td {
+            padding: 1rem 1.5rem !important;
+            border-bottom: 1px solid var(--gray-200) !important;
+        }
+
+        /* Response examples */
+        .redoc-wrap .responses {
+            background: white !important;
+            border-radius: 8px !important;
+            padding: 1.5rem !important;
+            margin: 1rem 0 !important;
+            border: 1px solid var(--gray-200) !important;
+        }
+
+        /* Try it out section */
+        .redoc-wrap .try-out {
+            background: var(--brand-primary-light) !important;
+            border: 1px solid var(--brand-primary) !important;
+            border-radius: 8px !important;
+            padding: 1.5rem !important;
+            margin: 1.5rem 0 !important;
+        }
+
+        .redoc-wrap .try-out button {
+            background: var(--brand-primary) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 6px !important;
+            padding: 0.75rem 1.5rem !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .redoc-wrap .try-out button:hover {
+            background: var(--brand-primary-hover) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Loading indicator */
+        .loading-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--brand-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        /* Error state */
+        .error-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            flex-direction: column;
+            gap: 1rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            color: var(--error);
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+
+        .error-retry {
+            background: var(--brand-primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .error-retry:hover {
+            background: var(--brand-primary-hover);
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Custom Header -->
-    <div class="custom-header relative overflow-hidden">
-        <!-- Background Elements -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-white opacity-10 floating"></div>
-            <div class="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-white opacity-10 floating" style="animation-delay: -1s;"></div>
-            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-white opacity-5 floating" style="animation-delay: -2s;"></div>
-        </div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center pulse-glow">
-                        <i class="fas fa-book text-3xl text-white"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-4xl font-bold mb-2">{{ title }}</h1>
-                        <p class="text-xl text-white/90">Comprehensive API Reference</p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center space-x-4">
-                    <a href="/" class="flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200">
-                        <i class="fas fa-home mr-2"></i>
-                        <span class="font-medium">Back to App</span>
-                    </a>
-                    <a href="/api/docs" class="flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-all duration-200">
-                        <i class="fas fa-code mr-2"></i>
-                        <span class="font-medium">Swagger UI</span>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- API Information -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-8">
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">REST</div>
-                        <div class="text-sm text-white/80">API Architecture</div>
-                    </div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">JSON</div>
-                        <div class="text-sm text-white/80">Data Format</div>
-                    </div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">OAuth</div>
-                        <div class="text-sm text-white/80">Authentication</div>
-                    </div>
-                </div>
-                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">v1.0</div>
-                        <div class="text-sm text-white/80">Current Version</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Documentation Features -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <!-- Feature 1 -->
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
-                    <i class="fas fa-rocket text-blue-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Fast & Reliable</h3>
-                <p class="text-gray-600 text-sm">
-                    High-performance API endpoints with enterprise-grade reliability and automatic error handling.
-                </p>
-            </div>
-            
-            <!-- Feature 2 -->
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
-                    <i class="fas fa-shield-alt text-green-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">Secure by Design</h3>
-                <p class="text-gray-600 text-sm">
-                    Built-in security features including rate limiting, authentication, and comprehensive validation.
-                </p>
-            </div>
-            
-            <!-- Feature 3 -->
-            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-                <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
-                    <i class="fas fa-brain text-purple-600 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-bold text-gray-900 mb-2">AI-Powered</h3>
-                <p class="text-gray-600 text-sm">
-                    Advanced AI capabilities with multiple model support and intelligent code generation.
-                </p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- ReDoc Container -->
-    <div id="redoc-container"></div>
 
-    <!-- ReDoc JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/redoc@latest/bundles/redoc.standalone.js"></script>
+<body>
+    <!-- Custom Header -->
+    <header class="redoc-header">
+        <div class="redoc-header-content">
+            <div class="redoc-brand">
+                <div class="redoc-brand-icon">
+                    🎵
+                </div>
+                <div class="redoc-brand-text">
+                    <h1>Aoede API Reference</h1>
+                    <p>Interactive documentation for enterprise AI code generation</p>
+                </div>
+            </div>
+            <nav class="redoc-nav">
+                <a href="/">Home</a>
+                <a href="/docs">Documentation</a>
+                <a href="/redoc" class="redoc-btn">API Reference</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div id="loading" class="loading-container">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">Loading API documentation...</p>
+    </div>
+
+    <!-- Error State -->
+    <div id="error" class="error-container" style="display: none;">
+        <div class="error-icon">⚠️</div>
+        <h2 class="error-title">Failed to Load Documentation</h2>
+        <p class="error-message">
+            We're having trouble loading the API documentation. This might be because the OpenAPI spec is not available.
+        </p>
+        <button class="error-retry" onclick="loadRedoc()">
+            Try Again
+        </button>
+    </div>
+
+    <!-- ReDoc Container -->
+    <div id="redoc-container" class="redoc-container" style="display: none;"></div>
+
+    <!-- ReDoc Script -->
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
     
     <script>
-        // Initialize ReDoc
-        Redoc.init('{{ openapi_url }}', {
-            scrollYOffset: 0,
-            hideDownloadButton: false,
-            disableSearch: false,
-            expandResponses: "200,201",
-            requiredPropsFirst: true,
-            sortPropsAlphabetically: true,
-            showExtensions: true,
-            hideHostname: false,
-            hideSchemaPattern: false,
-            expandSingleSchemaField: true,
-            simpleOneOfTypeLabel: true,
-            menuToggle: true,
-            nativeScrollbars: false,
-            theme: {
-                colors: {
-                    primary: {
-                        main: '#667eea'
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        async function loadRedoc() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const container = document.getElementById('redoc-container');
+
+            // Show loading state
+            loading.style.display = 'flex';
+            error.style.display = 'none';
+            container.style.display = 'none';
+
+            try {
+                // Try to fetch the OpenAPI spec
+                const response = await fetch('/openapi.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const spec = await response.json();
+
+                // Initialize ReDoc
+                Redoc.init(spec, {
+                    // ReDoc options for better UX
+                    theme: {
+                        colors: {
+                            primary: {
+                                main: '#2563eb'
+                            }
+                        },
+                        typography: {
+                            fontSize: '14px',
+                            fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                            code: {
+                                fontFamily: '"JetBrains Mono", "Monaco", "Menlo", monospace'
+                            }
+                        },
+                        sidebar: {
+                            width: '280px',
+                            backgroundColor: '#ffffff'
+                        },
+                        rightPanel: {
+                            backgroundColor: '#1f2937'
+                        }
                     },
-                    success: {
-                        main: '#10b981'
-                    },
-                    error: {
-                        main: '#ef4444'
-                    },
-                    warning: {
-                        main: '#f59e0b'
-                    },
-                    gray: {
-                        50: '#f9fafb',
-                        100: '#f3f4f6'
-                    }
-                },
-                typography: {
-                    fontSize: '14px',
-                    lineHeight: '1.5em',
-                    fontFamily: 'Inter, sans-serif',
-                    smoothing: 'antialiased',
-                    optimizeSpeed: false,
-                    headings: {
-                        fontFamily: 'Inter, sans-serif',
-                        fontWeight: '600'
-                    },
-                    code: {
-                        fontSize: '13px',
-                        fontFamily: 'Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                        lineHeight: '1.4em',
-                        backgroundColor: '#f7fafc',
-                        color: '#1a202c'
-                    }
-                },
-                menu: {
-                    backgroundColor: '#ffffff',
-                    textColor: '#1a202c',
-                    activeTextColor: '#667eea',
-                    groupItems: {
-                        backgroundColor: '#f8fafc'
-                    },
-                    level1Items: {
-                        backgroundColor: '#ffffff',
-                        textColor: '#1a202c'
-                    }
-                },
-                rightPanel: {
-                    backgroundColor: '#1a202c',
-                    textColor: '#ffffff'
+                    scrollYOffset: 120,
+                    hideDownloadButton: false,
+                    disableSearch: false,
+                    expandResponses: '200,201',
+                    jsonSampleExpandLevel: 2,
+                    hideSingleRequestSampleTab: true,
+                    menuToggle: true,
+                    nativeScrollbars: false,
+                    pathInMiddlePanel: true,
+                    requiredPropsFirst: true,
+                    sortPropsAlphabetically: true,
+                    showExtensions: true,
+                    hideHostname: false,
+                    expandDefaultServerVariables: true,
+                    maxDisplayedEnumValues: 5
+                }, document.getElementById('redoc-container'));
+
+                // Hide loading, show content
+                loading.style.display = 'none';
+                container.style.display = 'block';
+
+                // Reset retry count on success
+                retryCount = 0;
+
+            } catch (err) {
+                console.error('Failed to load ReDoc:', err);
+                
+                retryCount++;
+                
+                if (retryCount <= maxRetries) {
+                    // Retry after a delay
+                    setTimeout(() => {
+                        loadRedoc();
+                    }, 2000 * retryCount); // Exponential backoff
+                } else {
+                    // Show error state
+                    loading.style.display = 'none';
+                    error.style.display = 'flex';
+                    
+                    // Update error message with more details
+                    const errorMessage = document.querySelector('.error-message');
+                    errorMessage.innerHTML = `
+                        <strong>Error:</strong> ${err.message}<br><br>
+                        This usually happens when:<br>
+                        • The API server is not running<br>
+                        • The OpenAPI specification is not available at /openapi.json<br>
+                        • There's a network connectivity issue
+                    `;
                 }
             }
-        }, document.getElementById('redoc-container'));
-        
-        // Add custom styling after ReDoc loads
-        setTimeout(() => {
-            // Custom menu styling
-            const menuItems = document.querySelectorAll('[data-level="1"]');
-            menuItems.forEach(item => {
-                item.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
-                item.style.borderRadius = '8px';
-                item.style.marginBottom = '8px';
-                item.style.transition = 'all 0.2s ease';
-                
-                item.addEventListener('mouseenter', () => {
-                    item.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                    item.style.color = 'white';
-                });
-                
-                item.addEventListener('mouseleave', () => {
-                    if (!item.classList.contains('active')) {
-                        item.style.background = 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)';
-                        item.style.color = '#1a202c';
+        }
+
+        // Retry button handler
+        function retryLoad() {
+            retryCount = 0;
+            loadRedoc();
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadRedoc();
+        });
+
+        // Add some interactive features
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add keyboard shortcut for search (Ctrl/Cmd + K)
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    const searchBox = document.querySelector('.search-box input');
+                    if (searchBox) {
+                        searchBox.focus();
+                    }
+                }
+            });
+
+            // Add copy-to-clipboard functionality for code blocks
+            setTimeout(() => {
+                const codeBlocks = document.querySelectorAll('pre code');
+                codeBlocks.forEach(block => {
+                    if (!block.querySelector('.copy-button')) {
+                        const copyButton = document.createElement('button');
+                        copyButton.className = 'copy-button';
+                        copyButton.innerHTML = '📋';
+                        copyButton.style.cssText = `
+                            position: absolute;
+                            top: 8px;
+                            right: 8px;
+                            background: rgba(255, 255, 255, 0.1);
+                            border: none;
+                            color: white;
+                            padding: 4px 8px;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-size: 12px;
+                            opacity: 0.7;
+                            transition: opacity 0.15s ease;
+                        `;
+                        
+                        copyButton.addEventListener('click', async () => {
+                            try {
+                                await navigator.clipboard.writeText(block.textContent);
+                                copyButton.innerHTML = '✅';
+                                setTimeout(() => {
+                                    copyButton.innerHTML = '📋';
+                                }, 2000);
+                            } catch (err) {
+                                console.error('Failed to copy text:', err);
+                            }
+                        });
+
+                        copyButton.addEventListener('mouseenter', () => {
+                            copyButton.style.opacity = '1';
+                        });
+
+                        copyButton.addEventListener('mouseleave', () => {
+                            copyButton.style.opacity = '0.7';
+                        });
+
+                        const pre = block.parentElement;
+                        if (pre.tagName === 'PRE') {
+                            pre.style.position = 'relative';
+                            pre.appendChild(copyButton);
+                        }
                     }
                 });
-            });
-            
-            // Add custom styling to operation badges
-            const operationBadges = document.querySelectorAll('.operation-type');
-            operationBadges.forEach(badge => {
-                badge.style.borderRadius = '6px';
-                badge.style.fontWeight = '600';
-                badge.style.fontSize = '11px';
-                badge.style.padding = '4px 8px';
-            });
-            
-        }, 2000);
+            }, 2000); // Wait for ReDoc to fully render
+        });
     </script>
 </body>
 </html>

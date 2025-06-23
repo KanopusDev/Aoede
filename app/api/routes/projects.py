@@ -9,7 +9,9 @@ import time
 
 from app.core.database import get_db_session
 from app.models import Project, ProjectStatus, CodeGeneration
+from app.models.user import User
 from app.core.logging import get_logger
+from app.api.routes.auth import get_current_active_user
 from sqlalchemy import select, update, delete
 from sqlalchemy.orm import selectinload
 
@@ -21,7 +23,6 @@ class ProjectCreate(BaseModel):
     """Project creation schema"""
     name: str = Field(..., min_length=1, max_length=255)
     description: Optional[str] = None
-    user_id: Optional[str] = None
 
 
 class ProjectUpdate(BaseModel):
@@ -37,7 +38,7 @@ class ProjectResponse(BaseModel):
     name: str
     description: Optional[str]
     status: ProjectStatus
-    user_id: Optional[str]
+    user_id: UUID
     created_at: str
     updated_at: Optional[str]
     code_generations_count: int
@@ -52,7 +53,10 @@ class ProjectDetailResponse(ProjectResponse):
 
 
 @router.post("/", response_model=ProjectResponse)
-async def create_project(project_data: ProjectCreate):
+async def create_project(
+    project_data: ProjectCreate,
+    current_user: User = Depends(get_current_active_user)
+):
     """Create a new project"""
     try:
         async with get_db_session() as session:
@@ -60,7 +64,7 @@ async def create_project(project_data: ProjectCreate):
             project = Project(
                 name=project_data.name,
                 description=project_data.description,
-                user_id=project_data.user_id,
+                user_id=current_user.id,
                 status=ProjectStatus.ACTIVE
             )
             
@@ -68,7 +72,7 @@ async def create_project(project_data: ProjectCreate):
             await session.commit()
             await session.refresh(project)
             
-            logger.info(f"Created project {project.id} with name '{project.name}'")
+            logger.info(f"Created project {project.id} with name '{project.name}' for user {current_user.username}")
             
             # Return project response
             return ProjectResponse(
@@ -92,48 +96,43 @@ async def list_projects(
     skip: int = 0,
     limit: int = 100,
     status: Optional[ProjectStatus] = None,
-    user_id: Optional[str] = None
+    current_user: User = Depends(get_current_active_user)
 ):
-    """List projects with optional filtering"""
+    """List projects for the current user"""
     try:
         async with get_db_session() as session:
-            # Build query
-            query = select(Project)
+            # Build query for current user's projects only
+            query = select(Project).where(Project.user_id == current_user.id)
             
-            # Apply filters
+            # Add optional status filter
             if status:
                 query = query.where(Project.status == status)
-            if user_id:
-                query = query.where(Project.user_id == user_id)
             
-            # Apply pagination
-            query = query.offset(skip).limit(limit)
+            # Add pagination
+            query = query.offset(skip).limit(limit).order_by(Project.created_at.desc())
             
-            # Execute query
             result = await session.execute(query)
             projects = result.scalars().all()
             
-            # Convert to response models
+            # Get code generation counts
             project_responses = []
             for project in projects:
-                # Count code generations
-                gen_count_query = select(CodeGeneration).where(
-                    CodeGeneration.project_id == project.id
-                )
-                gen_count_result = await session.execute(gen_count_query)
-                gen_count = len(gen_count_result.scalars().all())
+                # Count code generations for this project
+                gen_query = select(CodeGeneration).where(CodeGeneration.project_id == project.id)
+                gen_result = await session.execute(gen_query)
+                gen_count = len(gen_result.scalars().all())
                 
                 project_responses.append(ProjectResponse(
                     id=project.id,
                     name=project.name,
                     description=project.description,
-                    status=project.status,
-                    user_id=project.user_id,
+                    status=project.status,                    user_id=project.user_id,
                     created_at=project.created_at.isoformat(),
                     updated_at=project.updated_at.isoformat() if project.updated_at else None,
                     code_generations_count=gen_count
                 ))
             
+            logger.info(f"Listed {len(project_responses)} projects for user {current_user.username}")
             return project_responses
             
     except Exception as e:
@@ -142,14 +141,20 @@ async def list_projects(
 
 
 @router.get("/{project_id}", response_model=ProjectDetailResponse)
-async def get_project(project_id: UUID):
+async def get_project(
+    project_id: UUID,
+    current_user: User = Depends(get_current_active_user)
+):
     """Get project by ID with detailed information"""
     try:
         async with get_db_session() as session:
-            # Get project with code generations
+            # Get project with code generations (ensure it belongs to current user)
             query = select(Project).options(
                 selectinload(Project.code_generations)
-            ).where(Project.id == project_id)
+            ).where(
+                Project.id == project_id,
+                Project.user_id == current_user.id
+            )
             
             result = await session.execute(query)
             project = result.scalar_one_or_none()
@@ -190,12 +195,19 @@ async def get_project(project_id: UUID):
 
 
 @router.put("/{project_id}", response_model=ProjectResponse)
-async def update_project(project_id: UUID, project_data: ProjectUpdate):
+async def update_project(
+    project_id: UUID, 
+    project_data: ProjectUpdate,
+    current_user: User = Depends(get_current_active_user)
+):
     """Update project"""
     try:
         async with get_db_session() as session:
-            # Get existing project
-            query = select(Project).where(Project.id == project_id)
+            # Get existing project (ensure it belongs to current user)
+            query = select(Project).where(
+                Project.id == project_id,
+                Project.user_id == current_user.id
+            )
             result = await session.execute(query)
             project = result.scalar_one_or_none()
             
@@ -252,12 +264,18 @@ async def update_project(project_id: UUID, project_data: ProjectUpdate):
 
 
 @router.delete("/{project_id}")
-async def delete_project(project_id: UUID):
+async def delete_project(
+    project_id: UUID,
+    current_user: User = Depends(get_current_active_user)
+):
     """Delete project and all associated data"""
     try:
         async with get_db_session() as session:
-            # Check if project exists
-            query = select(Project).where(Project.id == project_id)
+            # Check if project exists and belongs to current user
+            query = select(Project).where(
+                Project.id == project_id,
+                Project.user_id == current_user.id
+            )
             result = await session.execute(query)
             project = result.scalar_one_or_none()
             
@@ -269,7 +287,7 @@ async def delete_project(project_id: UUID):
             await session.execute(delete_query)
             await session.commit()
             
-            logger.info(f"Deleted project {project_id}")
+            logger.info(f"Deleted project {project_id} for user {current_user.username}")
             
             return {"message": "Project deleted successfully"}
             
@@ -281,12 +299,18 @@ async def delete_project(project_id: UUID):
 
 
 @router.get("/{project_id}/stats")
-async def get_project_stats(project_id: UUID):
+async def get_project_stats(
+    project_id: UUID,
+    current_user: User = Depends(get_current_active_user)
+):
     """Get project statistics"""
     try:
         async with get_db_session() as session:
-            # Check if project exists
-            query = select(Project).where(Project.id == project_id)
+            # Check if project exists and belongs to current user
+            query = select(Project).where(
+                Project.id == project_id,
+                Project.user_id == current_user.id
+            )
             result = await session.execute(query)
             project = result.scalar_one_or_none()
             

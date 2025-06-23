@@ -10,6 +10,9 @@ from datetime import datetime
 
 from app.core.database import Base
 
+# Import user models
+from app.models.user import User, UserRole, UserStatus, UserSession, UserAPIKey, UserLoginHistory
+
 
 class ProjectStatus(str, enum.Enum):
     """Project status enumeration"""
@@ -45,9 +48,11 @@ class Project(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     status = Column(Enum(ProjectStatus), default=ProjectStatus.ACTIVE, index=True)
-    user_id = Column(String(255), index=True)  # For future user management
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
     
     # Relationships
+    user = relationship("User", back_populates="projects")
+    code_generations = relationship("CodeGeneration", back_populates="project", cascade="all, delete-orphan")
     code_generations = relationship("CodeGeneration", back_populates="project", cascade="all, delete-orphan")
     
     def __repr__(self):
@@ -110,7 +115,7 @@ class ModelUsage(Base):
     total_tokens = Column(Integer, nullable=False)  # input + output tokens
     request_timestamp = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     response_time = Column(Float, nullable=False)  # Time in seconds
-    user_id = Column(String(255), index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), index=True)
     project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), index=True)
     success = Column(Boolean, default=True, index=True)
     error_message = Column(Text)

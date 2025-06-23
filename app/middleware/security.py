@@ -245,19 +245,17 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 "camera=(), microphone=(), geolocation=(), "
                 "payment=(), usb=(), magnetometer=(), gyroscope=()"
             )
-        }
-        
-        # Content Security Policy - different for docs pages
+        }          # Content Security Policy - different for docs pages
         if is_docs_page:
             # More permissive CSP for documentation pages
             security_headers["Content-Security-Policy"] = (
                 "default-src 'self'; "
                 "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
                 "https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com "
-                "https://fonts.googleapis.com data: blob:; "
+                "https://fonts.googleapis.com https://cdn.redoc.ly data: blob:; "
                 "style-src 'self' 'unsafe-inline' "
                 "https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com "
-                "https://fonts.googleapis.com data: blob:; "
+                "https://fonts.googleapis.com https://cdn.redoc.ly data: blob:; "
                 "img-src 'self' data: https: blob:; "
                 "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com data:; "
                 "connect-src 'self' https: wss: ws:; "
@@ -268,14 +266,15 @@ class SecurityMiddleware(BaseHTTPMiddleware):
                 "base-uri 'self'; "
                 "manifest-src 'self';"
             )
-        else:
-            # Standard CSP for regular pages
+        else:            # Standard CSP for regular pages
             security_headers["Content-Security-Policy"] = (
                 "default-src 'self'; "
-                "script-src 'self' 'unsafe-inline' "
-                "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; "
+                "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+                "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://static.cloudflareinsights.com "
+                "https://cdn.tailwindcss.com https://cdn.redoc.ly; "
                 "style-src 'self' 'unsafe-inline' "
-                "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com; "
+                "https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://fonts.googleapis.com "
+                "https://cdn.tailwindcss.com https://cdn.redoc.ly; "
                 "img-src 'self' data: https:; "
                 "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; "
                 "connect-src 'self' https:; "

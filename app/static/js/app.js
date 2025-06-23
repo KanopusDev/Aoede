@@ -1,756 +1,1223 @@
 /**
- * Main JavaScript application for Aoede
+ * Aoede Application Main Entry Point
+ * Enterprise-grade Progressive Web Application
  */
+class AoedeApp {
+    constructor() {
+        this.version = '1.0.0';
+        this.isInitialized = false;
+        this.features = {};
+        this.isProduction = true;
+        this.serviceWorker = null;
+        
+        this.init();
+    }
 
-// Application state
-const App = {
-    currentSection: 'dashboard',
-    projects: [],
-    models: [],
-    currentGeneration: null,
-    currentTest: null,
-    
-    // Initialize the application
-    init() {
-        this.setupEventListeners();
-        this.loadInitialData();
-        this.startHealthCheck();
-    },
-    
-    // Setup event listeners
-    setupEventListeners() {
-        // Menu toggle
-        document.getElementById('menuButton').addEventListener('click', this.toggleMenu);
-        
-        // Form submissions
-        document.getElementById('generateForm').addEventListener('submit', this.handleGenerateForm);
-        document.getElementById('testForm').addEventListener('submit', this.handleTestForm);
-        document.getElementById('modelTestForm').addEventListener('submit', this.handleModelTestForm);
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            const menu = document.getElementById('menuDropdown');
-            const button = document.getElementById('menuButton');
+    async init() {
+        try {
+            // Setup emergency fallback FIRST
+            this.setupEmergencyFallback();
             
-            if (!menu.contains(e.target) && !button.contains(e.target)) {
-                menu.classList.add('hidden');
+            // Register service worker for PWA functionality
+            await this.registerServiceWorker();
+            
+            // Wait for DOM to be ready
+            if (document.readyState === 'loading') {
+                await new Promise(function(resolve) {
+                    document.addEventListener('DOMContentLoaded', resolve);
+                });
+            }
+
+            // Initialize core modules with error handling
+            try {
+                await this.initializeCore();
+            } catch (error) {
+                this.handleError('Core initialization failed', error);
+            }
+            
+            // Initialize features with error handling
+            try {
+                await this.initializeFeatures();
+            } catch (error) {
+                this.handleError('Feature initialization failed', error);
+            }
+            
+            // Setup global event handlers
+            this.setupGlobalEventHandlers();
+            
+            // Initialize UI enhancements
+            this.initializeUIEnhancements();
+            
+            // Initialize enterprise features
+            this.initializeEnterpriseFeatures();
+            
+            // Hide loading screen
+            this.hideLoadingScreen();
+            
+            this.isInitialized = true;
+            
+        } catch (error) {
+            this.handleInitializationError(error);
+        }
+    }    setupEmergencyFallback() {
+        // Ensure basic navigation works even if everything else fails
+        
+        // Create fallback UI functions
+        if (!window.showSection) {
+            window.showSection = function(section) {
+                const sections = document.querySelectorAll('.section');
+                sections.forEach(function(sec) {
+                    sec.classList.add('hidden');
+                    sec.classList.remove('active');
+                });
+                
+                const targetSection = document.getElementById(section);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden');
+                    targetSection.classList.add('active');
+                    targetSection.style.animation = 'fadeInUp 0.5s ease-out';
+                }
+            };
+        }
+        
+        // Hide loading screen immediately if visible
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+        }, 100);
+    }    async initializeCore() {
+        // Core modules should already be initialized
+        // Just verify they exist and create fallbacks if needed
+        if (!window.api) {
+            this.handleError('API Service not available - creating fallback');
+            window.api = {
+                get: function() { return Promise.resolve({}); },
+                post: function() { return Promise.resolve({}); },
+                put: function() { return Promise.resolve({}); },
+                delete: function() { return Promise.resolve({}); }
+            };
+        }
+        
+        if (!window.ui) {
+            this.handleError('UI Manager not available - creating fallback');
+            window.ui = {
+                navigateToView: function(view) { 
+                    if (window.showSection) window.showSection(view);
+                },
+                openModal: function(modal) { 
+                    const modalElement = document.getElementById(modal);
+                    if (modalElement) {
+                        modalElement.classList.remove('hidden');
+                        modalElement.classList.add('show');
+                    }
+                },
+                closeModal: function(modal) { 
+                    const modalElement = document.getElementById(modal);
+                    if (modalElement) {
+                        modalElement.classList.add('hidden');
+                        modalElement.classList.remove('show');
+                    }
+                },
+                showToast: function(msg, type) { 
+                    this.createToast(msg, type);
+                },
+                createToast: function(message, type) {
+                    const toast = document.createElement('div');
+                    toast.className = `alert alert-${type} fixed top-4 right-4 z-50`;
+                    toast.innerHTML = `
+                        <div class="alert-content">
+                            <span>${message}</span>
+                        </div>
+                        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+                    `;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 5000);
+                }
+            };
+        }
+        
+        if (!window.auth) {
+            this.handleError('Auth Manager not available - creating fallback');
+            window.auth = {
+                isAuthenticated: false,
+                currentUser: null,
+                requireAuth: function() { return false; }
+            };
+        }
+    }    async initializeFeatures() {
+        try {
+            // Initialize project management feature
+            this.features.projects = new ProjectsFeature();
+        } catch (error) {
+            this.handleError('Failed to initialize Projects feature', error);
+        }
+        
+        try {
+            // Initialize code generation feature
+            this.features.codeGeneration = new CodeGenerationFeature();
+        } catch (error) {
+            this.handleError('Failed to initialize Code Generation feature', error);
+        }
+        
+        try {
+            // Initialize analysis feature
+            this.features.analysis = new AnalysisFeature();
+        } catch (error) {
+            this.handleError('Failed to initialize Analysis feature', error);
+        }
+        
+        try {
+            // Initialize models feature
+            this.features.models = new ModelsFeature();
+        } catch (error) {
+            this.handleError('Failed to initialize Models feature', error);
+        }
+    }
+
+    initializeUIEnhancements() {
+        // Initialize enhanced button interactions
+        this.initializeButtonEnhancements();
+        
+        // Initialize card hover effects
+        this.initializeCardEnhancements();
+        
+        // Initialize form enhancements
+        this.initializeFormEnhancements();
+        
+        // Initialize loading states
+        this.initializeLoadingStates();
+        
+        // Initialize responsive behaviors
+        this.initializeResponsiveBehaviors();
+    }
+
+    initializeButtonEnhancements() {
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                this.appendChild(ripple);
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    }
+
+    initializeCardEnhancements() {
+        // Add enhanced hover effects for cards
+        const cards = document.querySelectorAll('.project-card, .model-card, .feature-card, .dashboard-card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-4px)';
+                this.style.transition = 'all 0.3s ease-out';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+        });
+    }
+
+    initializeFormEnhancements() {
+        // Add floating label animations
+        const formInputs = document.querySelectorAll('.form-input, .form-textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.classList.add('focused');
+                const label = this.parentNode.querySelector('.form-label');
+                if (label) {
+                    label.classList.add('floating');
+                }
+            });
+            
+            input.addEventListener('blur', function() {
+                this.classList.remove('focused');
+                if (!this.value) {
+                    const label = this.parentNode.querySelector('.form-label');
+                    if (label) {
+                        label.classList.remove('floating');
+                    }
+                }
+            });
+        });
+    }
+
+    initializeLoadingStates() {
+        // Add loading state management for buttons
+        const loadingButtons = document.querySelectorAll('[data-loading]');
+        loadingButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                if (!this.disabled) {
+                    this.classList.add('loading');
+                    this.disabled = true;
+                    
+                    const spinner = this.querySelector('.fa-spinner');
+                    if (spinner) {
+                        spinner.classList.remove('hidden');
+                    }
+                }
+            });
+        });
+    }
+
+    initializeResponsiveBehaviors() {
+        // Handle mobile navigation
+        const mobileToggle = document.querySelector('.mobile-nav-toggle');
+        const mobileMenu = document.querySelector('.mobile-nav-menu');
+        
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', function() {
+                mobileMenu.classList.toggle('show');
+            });
+        }
+        
+        // Handle responsive table scrolling
+        const tables = document.querySelectorAll('table');
+        tables.forEach(table => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'table-responsive';
+            table.parentNode.insertBefore(wrapper, table);
+            wrapper.appendChild(table);
+        });
+    }
+
+    handleError(message, error) {
+        if (this.isProduction) {
+            // In production, log to error service
+            this.logError(message, error);
+        }
+    }    
+    logError(message, error) {
+        // Send error to logging service
+        if (window.api && typeof window.api.logError === 'function') {
+            try {
+                const logPromise = window.api.logError({
+                    message: message,
+                    error: error ? error.toString() : null,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    url: window.location.href
+                });
+                
+                // Only call catch if it's a Promise
+                if (logPromise && typeof logPromise.catch === 'function') {
+                    logPromise.catch(() => {
+                        // Silently fail if logging service is unavailable
+                    });
+                }
+            } catch (e) {
+                // Silently fail if logging service is unavailable
+            }
+        }
+    }
+
+    setupGlobalEventHandlers() {
+        // Handle API errors globally
+        window.addEventListener('api:error', function(e) {
+            const error = e.detail;
+            
+            if (error.isAuthError) {
+                window.auth.clearAuthentication();
+                window.ui.openModal('authModal');
+                window.ui.showToast('Please sign in to continue', 'warning');
+            } else if (error.isNetworkError) {
+                window.ui.showToast('Network error - please check your connection', 'error');
+            } else {
+                window.ui.showToast('An error occurred: ' + error.message, 'error');
             }
         });
+
+        // Handle authentication events
+        window.addEventListener('auth:login', function() {
+            window.ui.navigateToView('dashboard');
+        });
+
+        window.addEventListener('auth:logout', function() {
+            window.ui.navigateToView('dashboard');
+        });
+    }    hideLoadingScreen() {
+        try {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transition = 'opacity 0.5s ease-out';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }
+            
+            // Ensure dashboard is visible with animation
+            const dashboard = document.getElementById('dashboard');
+            if (dashboard) {
+                dashboard.classList.remove('hidden');
+                dashboard.classList.add('active');
+                dashboard.style.animation = 'fadeInUp 0.5s ease-out';
+            }
+        } catch (error) {
+            this.handleError('Error hiding loading screen', error);
+        }
+    }
+
+    handleInitializationError(error) {
+        this.handleError('Initialization error', error);
         
-        // Close modal when clicking background
-        document.getElementById('modalContainer').addEventListener('click', (e) => {
-            if (e.target.id === 'modalContainer') {
-                this.closeModal();
+        // Force hide loading screen
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.style.display = 'none';
+        }
+        
+        // Show dashboard as fallback
+        const dashboard = document.getElementById('dashboard');
+        if (dashboard) {
+            dashboard.classList.remove('hidden');
+            dashboard.classList.add('active');
+        }
+        
+        // Show error message to user
+        setTimeout(function() {
+            if (window.ui && window.ui.showToast) {
+                window.ui.showToast('Application started with limited functionality', 'warning');
+            }
+        }, 1000);
+    }    /**
+     * Emergency initialization fallback
+     * This runs if normal initialization takes too long
+     */
+    setupEmergencyTimeout() {
+        // If loading screen is still visible after 10 seconds, force hide it
+        setTimeout(() => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen && loadingScreen.style.display !== 'none') {
+                this.hideLoadingScreen();
+                this.showDashboardFallback();
+            }
+        }, 10000);
+    }
+
+    showDashboardFallback() {
+        // Force show dashboard section
+        const dashboard = document.getElementById('dashboard');
+        if (dashboard) {
+            // Hide all sections first
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.add('hidden');
+                section.classList.remove('active');
+            });
+            
+            // Show dashboard
+            dashboard.classList.remove('hidden');
+            dashboard.classList.add('active');
+            dashboard.style.animation = 'fadeInUp 0.5s ease-out';
+        }
+    }
+}
+
+/**
+ * Base class for application features
+ */
+class FeatureBase {
+    constructor(name) {
+        this.name = name;
+        this.isInitialized = false;
+    }    async initialize() {
+        this.isInitialized = true;
+    }
+}
+
+/**
+ * Projects management feature
+ */
+class ProjectsFeature extends FeatureBase {
+    constructor() {
+        super('Projects');
+        this.currentProject = null;
+        this.projects = [];
+        this.initialize();
+    }
+
+    async initialize() {
+        await super.initialize();
+        this.setupEventHandlers();
+    }
+
+    setupEventHandlers() {
+        const self = this;
+        
+        // Handle project creation
+        window.addEventListener('form:submit', function(e) {
+            const detail = e.detail;
+            if (detail.formId === 'createProjectForm') {
+                self.createProject(detail.data);
             }
         });
-    },
-    
-    // Load initial data
-    async loadInitialData() {
+    }    async createProject(projectData) {
         try {
-            await Promise.all([
-                this.loadProjects(),
-                this.loadModels(),
-                this.loadDashboardStats()
-            ]);
-        } catch (error) {
-            console.error('Error loading initial data:', error);
-            UI.showNotification('Error loading application data', 'error');
-        }
-    },
-    
-    // Start periodic health check
-    startHealthCheck() {
-        this.checkHealth();
-        setInterval(() => this.checkHealth(), 30000); // Check every 30 seconds
-    },
-      // Check system health
-    async checkHealth() {
-        try {
-            if (typeof API === 'undefined') {
-                console.error('API is not defined in checkHealth');
-                this.updateHealthStatus('error', { error: 'API not available' });
+            if (!window.auth.requireAuth()) {
                 return;
             }
-            const response = await API.get('/health/detailed');
-            this.updateHealthStatus(response.status, response);
-        } catch (error) {
-            console.error('Health check failed:', error);
-            this.updateHealthStatus('error', { error: error.message });
-        }
-    },
-    
-    // Update health status in UI
-    updateHealthStatus(status, data) {
-        const indicator = document.getElementById('healthIndicator');
-        const text = document.getElementById('healthText');
-        
-        indicator.className = 'w-3 h-3 rounded-full';
-        
-        switch (status) {
-            case 'healthy':
-                indicator.classList.add('bg-green-500');
-                text.textContent = 'Healthy';
-                break;
-            case 'degraded':
-                indicator.classList.add('bg-yellow-500');
-                text.textContent = 'Degraded';
-                break;
-            case 'unhealthy':
-            case 'error':
-                indicator.classList.add('bg-red-500');
-                text.textContent = 'Unhealthy';
-                break;
-            default:
-                indicator.classList.add('bg-gray-400');
-                text.textContent = 'Unknown';
-        }
-    },
-      // Load projects
-    async loadProjects() {
-        try {
-            if (typeof API === 'undefined') {
-                console.error('API is not defined in loadProjects');
-                return;
+
+            // Show loading state
+            const createButton = document.querySelector('[data-form="createProject"] .btn-primary');
+            if (createButton) {
+                createButton.classList.add('loading');
+                createButton.disabled = true;
             }
-            this.projects = await API.get('/projects/');
-            this.updateProjectsList();
-            this.updateProjectSelect();
-        } catch (error) {
-            console.error('Error loading projects:', error);
-        }
-    },
-      // Load AI models
-    async loadModels() {
-        try {
-            if (typeof API === 'undefined') {
-                console.error('API is not defined in loadModels');
-                return;
-            }
-            this.models = await API.get('/models/');
-            this.updateModelSelect();
-            await this.loadModelStatus();
-        } catch (error) {
-            console.error('Error loading models:', error);
-        }
-    },
-    
-    // Load dashboard statistics
-    async loadDashboardStats() {
-        try {
-            // In a real implementation, this would call actual stats endpoints
-            document.getElementById('totalProjects').textContent = this.projects.length;
-            document.getElementById('totalGenerations').textContent = '0';
-            document.getElementById('totalTests').textContent = '0';
-            document.getElementById('successRate').textContent = '100%';
+
+            const project = await window.api.createProject(projectData);
+            this.projects.push(project);
             
-            this.loadRecentActivity();
+            window.ui.closeModal('createProjectModal');
+            window.ui.showToast('Project created successfully!', 'success');
+            
+            // Refresh projects view with animation
+            this.refreshProjectsList();
+            
         } catch (error) {
-            console.error('Error loading dashboard stats:', error);
+            this.handleError('Failed to create project', error);
+            window.ui.showToast('Failed to create project: ' + error.message, 'error');
+        } finally {
+            // Remove loading state
+            const createButton = document.querySelector('[data-form="createProject"] .btn-primary');
+            if (createButton) {
+                createButton.classList.remove('loading');
+                createButton.disabled = false;
+            }
         }
-    },
-    
-    // Load recent activity
-    loadRecentActivity() {
-        const activityContainer = document.getElementById('recentActivity');
-        activityContainer.innerHTML = `
-            <div class="text-sm text-gray-500">
-                <p>• Application started successfully</p>
-                <p>• ${this.projects.length} projects loaded</p>
-                <p>• ${this.models.length} AI models available</p>
-                <p>• System health check passed</p>
-            </div>
-        `;
-    },
-    
-    // Update projects list
-    updateProjectsList() {
+    }
+
+    async refreshProjectsList() {
+        try {
+            this.projects = await window.api.getProjects();
+            this.renderProjectsList();
+            
+            // Add fade-in animation
+            const projectCards = document.querySelectorAll('.project-card');
+            projectCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.3s ease-out';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        } catch (error) {
+            this.handleError('Failed to load projects', error);
+        }
+    }
+
+    handleError(message, error) {
+        if (window.app && typeof window.app.handleError === 'function') {
+            window.app.handleError(message, error);
+        }
+    }renderProjectsList() {
         const container = document.getElementById('projectsList');
-        
+        if (!container) return;
+
         if (this.projects.length === 0) {
             container.innerHTML = `
-                <div class="col-span-full text-center py-12">
-                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-                    </svg>
-                    <h3 class="mt-2 text-sm font-medium text-gray-900">No projects</h3>
-                    <p class="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
-                    <div class="mt-6">
-                        <button onclick="createProject()" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            New Project
+                <div class="text-center py-12 col-span-full">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-folder-open text-gray-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">No projects yet</h3>
+                    <p class="text-gray-600 mb-6">Create your first project to get started with AI code generation.</p>
+                    <button onclick="createProject()" class="btn-primary">
+                        <i class="fas fa-plus"></i>
+                        Create Your First Project
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        const projectsHTML = this.projects.map(function(project) {
+            return `
+                <div class="project-card" data-project-id="${project.id}">
+                    <div class="project-card-header">
+                        <h3 class="project-card-title">
+                            <i class="fas fa-folder text-primary-600"></i>
+                            ${project.name}
+                        </h3>
+                        <p class="project-card-description">${project.description || 'No description'}</p>
+                    </div>
+                    <div class="project-card-body">
+                        <div class="project-meta">
+                            <div class="project-meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>${new Date(project.created_at).toLocaleDateString()}</span>
+                            </div>
+                            <div class="project-meta-item">
+                                <i class="fas fa-code"></i>
+                                <span>${project.language || 'Multiple'}</span>
+                            </div>
+                        </div>
+                        <div class="project-status ${project.status || 'active'}">${project.status || 'Active'}</div>
+                    </div>
+                    <div class="project-card-footer">
+                        <div class="project-stats">
+                            <div class="project-stat">
+                                <i class="fas fa-file-code"></i>
+                                <span>${project.files_count || 0}</span>
+                            </div>
+                            <div class="project-stat">
+                                <i class="fas fa-clock"></i>
+                                <span>${project.last_modified || 'Never'}</span>
+                            </div>
+                        </div>
+                        <div class="project-actions">
+                            <button onclick="selectProject('${project.id}')" class="btn-primary btn-sm">
+                                <i class="fas fa-folder-open"></i>
+                                Open
+                            </button>
+                            <button onclick="editProject('${project.id}')" class="btn-secondary btn-sm">
+                                <i class="fas fa-edit"></i>
+                                Edit
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = projectsHTML;
+    }
+}
+
+/**
+ * Code generation feature
+ */
+class CodeGenerationFeature extends FeatureBase {
+    constructor() {
+        super('Code Generation');
+        this.generationHistory = [];
+        this.initialize();
+    }
+
+    async initialize() {
+        await super.initialize();
+        this.setupEventHandlers();
+    }
+
+    setupEventHandlers() {
+        const self = this;
+        
+        window.addEventListener('form:submit', function(e) {
+            const detail = e.detail;
+            if (detail.formId === 'generateCodeForm') {
+                self.generateCode(detail.data);
+            }
+        });
+    }    async generateCode(generationData) {
+        try {
+            if (!window.auth.requireAuth()) {
+                return;
+            }
+
+            // Show loading UI
+            this.showGenerationLoading(true);
+            
+            const result = await window.api.generateCode(generationData);
+            
+            this.generationHistory.unshift(result);
+            this.displayGenerationResult(result);
+            
+            window.ui.showToast('Code generated successfully!', 'success');
+            
+        } catch (error) {
+            this.handleError('Code generation failed', error);
+            window.ui.showToast('Code generation failed: ' + error.message, 'error');
+        } finally {
+            this.showGenerationLoading(false);
+        }
+    }
+
+    showGenerationLoading(isLoading) {
+        const generateButton = document.querySelector('#generateForm .btn-primary');
+        const spinner = document.getElementById('generateSpinner');
+        const icon = document.getElementById('generateIcon');
+        const text = document.getElementById('generateButtonText');
+
+        if (generateButton) {
+            generateButton.disabled = isLoading;
+        }
+
+        if (spinner) {
+            spinner.classList.toggle('hidden', !isLoading);
+        }
+
+        if (icon) {
+            icon.classList.toggle('hidden', isLoading);
+        }
+
+        if (text) {
+            text.textContent = isLoading ? 'Generating...' : 'Generate Code';
+        }
+    }
+
+    displayGenerationResult(result) {
+        const container = document.getElementById('generationResult');
+        if (!container) return;
+
+        const resultHTML = `
+            <div class="generation-result-card">
+                <div class="generation-result-header">
+                    <h3><i class="fas fa-check-circle"></i> Generated Code</h3>
+                    <div class="flex items-center space-x-2">
+                        <button onclick="copyCode()" class="btn-ghost btn-sm">
+                            <i class="fas fa-copy"></i>
+                            Copy
+                        </button>
+                        <button onclick="testGenerated()" class="btn-secondary btn-sm">
+                            <i class="fas fa-vial"></i>
+                            Test
+                        </button>
+                        <button onclick="saveToProject()" class="btn-primary btn-sm">
+                            <i class="fas fa-save"></i>
+                            Save
                         </button>
                     </div>
                 </div>
-            `;
-            return;
-        }
-        
-        container.innerHTML = this.projects.map(project => `
-            <div class="bg-white rounded-lg shadow p-6 hover:shadow-md transition-shadow">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-lg font-semibold text-gray-900">${UI.escapeHtml(project.name)}</h3>
-                    <span class="badge badge-${this.getStatusColor(project.status)}">${project.status}</span>
-                </div>
-                
-                ${project.description ? `<p class="text-gray-600 mb-4">${UI.escapeHtml(project.description)}</p>` : ''}
-                
-                <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <span>${project.code_generations_count} generations</span>
-                    <span>Created ${UI.formatDate(project.created_at)}</span>
-                </div>
-                
-                <div class="flex space-x-2">
-                    <button onclick="viewProject('${project.id}')" class="flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        View
+                <div class="code-block-container">
+                    <button class="code-copy-btn" onclick="copyToClipboard('${result.id}')">
+                        <i class="fas fa-copy"></i>
                     </button>
-                    <button onclick="generateForProject('${project.id}')" class="flex-1 text-center px-3 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700">
-                        Generate
-                    </button>
+                    <pre id="generatedCode" class="code-block">${this.escapeHtml(result.code)}</pre>
                 </div>
-            </div>
-        `).join('');
-    },
-    
-    // Update project select dropdown
-    updateProjectSelect() {
-        const select = document.getElementById('projectSelect');
-        select.innerHTML = '<option value="">Select a project...</option>' + 
-            this.projects.map(project => 
-                `<option value="${project.id}">${UI.escapeHtml(project.name)}</option>`
-            ).join('');
-    },
-    
-    // Update model select dropdown
-    updateModelSelect() {
-        const select = document.getElementById('modelSelect');
-        select.innerHTML = '<option value="">Auto-select</option>' + 
-            this.models.map(model => 
-                `<option value="${model.name}">${model.name} (${model.type})</option>`
-            ).join('');
-    },
-    
-    // Load model status
-    async loadModelStatus() {
-        try {
-            const status = await API.get('/models/status');
-            this.updateModelStatus(status);
-        } catch (error) {
-            console.error('Error loading model status:', error);
-        }
-    },
-    
-    // Update model status display
-    updateModelStatus(status) {
-        const container = document.getElementById('modelStatus');
-        
-        container.innerHTML = `
-            <div class="mb-4">
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium">Overall Status</span>
-                    <span class="badge badge-${status.overall_status === 'healthy' ? 'success' : 'error'}">
-                        ${status.overall_status}
-                    </span>
-                </div>
-                <p class="text-sm text-gray-500 mt-1">
-                    ${status.healthy_models}/${status.total_models} models healthy
-                </p>
-            </div>
-            
-            <div class="space-y-2">
-                ${Object.entries(status.models).map(([name, info]) => `
-                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
-                        <span class="text-sm font-medium">${name}</span>
-                        <span class="badge badge-${info.status === 'healthy' ? 'success' : 'error'}">
-                            ${info.status}
-                        </span>
+                <div class="generation-meta p-4 bg-gray-50 border-t">
+                    <div class="flex justify-between items-center text-sm text-gray-600">
+                        <span><i class="fas fa-code"></i> Language: ${result.language}</span>
+                        <span><i class="fas fa-clock"></i> Generated: ${new Date(result.created_at).toLocaleString()}</span>
+                        <span><i class="fas fa-file"></i> Size: ${result.code.length} characters</span>
                     </div>
-                `).join('')}
+                </div>
             </div>
         `;
-    },
-    
-    // Get status color for badges
-    getStatusColor(status) {
-        const colorMap = {
-            'active': 'success',
-            'completed': 'info',
-            'error': 'error',
-            'paused': 'warning'
-        };
-        return colorMap[status] || 'info';
-    },
-    
-    // Toggle menu dropdown
-    toggleMenu() {
-        const dropdown = document.getElementById('menuDropdown');
-        dropdown.classList.toggle('hidden');
-    },
-    
-    // Handle generate form submission
-    async handleGenerateForm(e) {
-        e.preventDefault();
-        
-        const form = e.target;
-        const formData = new FormData(form);
-        
-        const data = {
-            prompt: formData.get('prompt'),
-            language: formData.get('language'),
-            project_id: formData.get('project_id') || null
-        };
-        
-        if (!data.prompt.trim()) {
-            UI.showNotification('Please enter a prompt', 'warning');
-            return;
-        }
-        
-        const button = document.getElementById('generateButtonText');
-        const spinner = document.getElementById('generateSpinner');
-        
-        try {
-            button.textContent = 'Generating...';
-            spinner.classList.remove('hidden');
-            
-            const result = await API.post('/generate/code', data);
-            
-            if (result.success) {
-                this.currentGeneration = result;
-                this.showGenerationResult(result);
-                UI.showNotification('Code generated successfully!', 'success');
-            } else {
-                throw new Error(result.error || 'Generation failed');
-            }
-            
-        } catch (error) {
-            console.error('Generate error:', error);
-            UI.showNotification(`Generation failed: ${error.message}`, 'error');
-        } finally {
-            button.textContent = 'Generate Code';
-            spinner.classList.add('hidden');
-        }
-    },
-    
-    // Show generation result
-    showGenerationResult(result) {
-        const container = document.getElementById('generationResult');
-        const codeElement = document.getElementById('generatedCode');
-        
-        codeElement.textContent = result.code;
-        container.classList.remove('hidden');
-        
-        // Scroll to result
-        container.scrollIntoView({ behavior: 'smooth' });
-    },
-    
-    // Handle test form submission
-    async handleTestForm(e) {
-        e.preventDefault();
-        
-        const form = e.target;
-        const formData = new FormData(form);
-        
-        const data = {
-            code: formData.get('code'),
-            language: formData.get('language')
-        };
-        
-        if (!data.code.trim()) {
-            UI.showNotification('Please enter code to test', 'warning');
-            return;
-        }
-        
-        const button = document.getElementById('testButtonText');
-        const spinner = document.getElementById('testSpinner');
-        
-        try {
-            button.textContent = 'Testing...';
-            spinner.classList.remove('hidden');
-            
-            const result = await API.post('/test/execute', data);
-            
-            this.currentTest = result;
-            this.showTestResult(result);
-            
-            if (result.success) {
-                UI.showNotification('Tests completed successfully!', 'success');
-            } else {
-                UI.showNotification('Tests completed with errors', 'warning');
-            }
-            
-        } catch (error) {
-            console.error('Test error:', error);
-            UI.showNotification(`Test failed: ${error.message}`, 'error');
-        } finally {
-            button.textContent = 'Run Full Test';
-            spinner.classList.add('hidden');
-        }
-    },
-    
-    // Show test result
-    showTestResult(result) {
-        const container = document.getElementById('testResults');
-        const output = document.getElementById('testOutput');
-        
-        let html = '';
-        
-        if (result.success) {
-            html += `
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <h4 class="text-green-800 font-medium">Tests Passed</h4>
-                    </div>
-                    <p class="text-green-700 mt-2">
-                        Code validation completed successfully in ${result.total_iterations} iterations.
-                    </p>
-                </div>
-            `;
-        } else {
-            html += `
-                <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <h4 class="text-red-800 font-medium">Tests Failed</h4>
-                    </div>
-                    <p class="text-red-700 mt-2">${result.error || 'Unknown error occurred'}</p>
-                </div>
-            `;
-        }
-        
-        // Show final code if different from input
-        if (result.final_code && result.final_code !== document.getElementById('testCode').value) {
-            html += `
-                <div class="mt-4">
-                    <h4 class="font-medium text-gray-900 mb-2">Fixed Code:</h4>
-                    <div class="bg-gray-900 rounded-lg p-4">
-                        <pre class="text-green-400 text-sm overflow-x-auto">${UI.escapeHtml(result.final_code)}</pre>
-                    </div>
-                </div>
-            `;
-        }
-        
-        output.innerHTML = html;
-        container.classList.remove('hidden');
-        
-        // Scroll to result
-        container.scrollIntoView({ behavior: 'smooth' });
-    },
-    
-    // Handle model test form submission
-    async handleModelTestForm(e) {
-        e.preventDefault();
-        
-        const form = e.target;
-        const formData = new FormData(form);
-        
-        const data = {
-            prompt: formData.get('prompt'),
-            model: formData.get('model') || null
-        };
-        
-        if (!data.prompt.trim()) {
-            UI.showNotification('Please enter a test prompt', 'warning');
-            return;
-        }
-        
-        const button = document.getElementById('modelTestButtonText');
-        const spinner = document.getElementById('modelTestSpinner');
-        
-        try {
-            button.textContent = 'Testing...';
-            spinner.classList.remove('hidden');
-            
-            const result = await API.post('/models/test', data);
-            
-            this.showModelTestResult(result);
-            
-            if (result.success) {
-                UI.showNotification('Model test completed!', 'success');
-            } else {
-                UI.showNotification('Model test failed', 'error');
-            }
-            
-        } catch (error) {
-            console.error('Model test error:', error);
-            UI.showNotification(`Model test failed: ${error.message}`, 'error');
-        } finally {
-            button.textContent = 'Test Model';
-            spinner.classList.add('hidden');
-        }
-    },
-    
-    // Show model test result
-    showModelTestResult(result) {
-        const container = document.getElementById('modelTestResult');
-        const output = document.getElementById('modelTestOutput');
-        
-        let content = '';
-        
-        if (result.success) {
-            content = `Model: ${result.model_used}
-Response Time: ${result.response_time.toFixed(3)}s
-Input Tokens: ${result.input_tokens}
-Output Tokens: ${result.output_tokens}
 
-Response:
-${result.response}`;
-        } else {
-            content = `Error: ${result.error}`;
-        }
-        
-        output.textContent = content;
+        container.innerHTML = resultHTML;
         container.classList.remove('hidden');
-    },
-    
-    // Close modal
-    closeModal() {
-        document.getElementById('modalContainer').classList.add('hidden');
-    },
-    
-    // Show modal
-    showModal(content) {
-        document.getElementById('modalContent').innerHTML = content;
-        document.getElementById('modalContainer').classList.remove('hidden');
+        
+        // Add animation
+        const resultCard = container.querySelector('.generation-result-card');
+        if (resultCard) {
+            resultCard.style.opacity = '0';
+            resultCard.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                resultCard.style.transition = 'all 0.5s ease-out';
+                resultCard.style.opacity = '1';
+                resultCard.style.transform = 'translateY(0)';
+            }, 100);
+        }
     }
-};
 
-// Global functions for onclick handlers
-function showSection(section) {
-    App.currentSection = section;
-    
-    // Hide all sections
-    document.querySelectorAll('.section').forEach(el => {
-        el.classList.add('hidden');
-    });
-    
-    // Show selected section
-    document.getElementById(section).classList.remove('hidden');
-    
-    // Hide menu
-    document.getElementById('menuDropdown').classList.add('hidden');
-    
-    // Load section-specific data
-    switch (section) {
-        case 'projects':
-            App.loadProjects();
-            break;
-        case 'models':
-            App.loadModelStatus();
-            break;
-        case 'monitoring':
-            loadMonitoringData();
-            break;
+    handleError(message, error) {
+        if (window.app && typeof window.app.handleError === 'function') {
+            window.app.handleError(message, error);
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+/**
+ * Analysis feature
+ */
+class AnalysisFeature extends FeatureBase {
+    constructor() {
+        super('Analysis');
+        this.initialize();
+    }
+
+    async initialize() {
+        await super.initialize();
+        // Analysis feature initialization
+    }
+}
+
+/**
+ * Models management feature
+ */
+class ModelsFeature extends FeatureBase {
+    constructor() {
+        super('Models');
+        this.availableModels = [];
+        this.initialize();
+    }
+
+    async initialize() {
+        await super.initialize();
+        await this.loadAvailableModels();
+    }    async loadAvailableModels() {
+        try {
+            this.availableModels = await window.api.getAIModels();
+            this.renderModelsList();
+            this.updateModelsStats();
+        } catch (error) {
+            this.handleError('Failed to load models', error);
+        }
+    }
+
+    renderModelsList() {
+        const container = document.getElementById('modelsList');
+        if (!container) return;
+
+        if (this.availableModels.length === 0) {
+            container.innerHTML = `
+                <div class="text-center py-12 col-span-full">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-brain text-gray-400 text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Loading models...</h3>
+                    <p class="text-gray-600">Please wait while we check model availability.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const modelsHTML = this.availableModels.map(function(model) {
+            return `
+                <div class="model-card" data-model-id="${model.id}">
+                    <div class="model-card-header">
+                        <div class="model-name">
+                            <div class="model-status-indicator ${model.status}"></div>
+                            ${model.name}
+                        </div>
+                        <div class="model-provider">${model.provider}</div>
+                    </div>
+                    <div class="model-card-body">
+                        <div class="model-description">${model.description}</div>
+                        <div class="model-specs">
+                            <div class="model-spec">
+                                <span class="spec-label">Type</span>
+                                <span class="spec-value">${model.type || 'N/A'}</span>
+                            </div>
+                            <div class="model-spec">
+                                <span class="spec-label">Version</span>
+                                <span class="spec-value">${model.version || 'N/A'}</span>
+                            </div>
+                        </div>
+                        <div class="model-capabilities">
+                            <div class="capabilities-title">Capabilities</div>
+                            <div class="capabilities-list">
+                                ${(model.capabilities || []).map(cap => `<span class="capability-tag">${cap}</span>`).join('')}
+                            </div>
+                        </div>
+                        <div class="model-metrics">
+                            <div class="model-metric">
+                                <div class="metric-number">${model.response_time || '0'}ms</div>
+                                <div class="metric-label">Avg Response</div>
+                            </div>
+                            <div class="model-metric">
+                                <div class="metric-number">${model.usage_count || '0'}</div>
+                                <div class="metric-label">Usage</div>
+                            </div>
+                            <div class="model-metric">
+                                <div class="metric-number">${model.accuracy || '0'}%</div>
+                                <div class="metric-label">Accuracy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="model-card-footer">
+                        <div class="model-last-used">
+                            Last used: ${model.last_used ? new Date(model.last_used).toLocaleDateString() : 'Never'}
+                        </div>
+                        <div class="model-actions">
+                            <button onclick="testModel('${model.id}')" class="btn-secondary btn-sm">
+                                <i class="fas fa-vial"></i>
+                                Test
+                            </button>
+                            <button onclick="useModel('${model.id}')" class="btn-primary btn-sm">
+                                <i class="fas fa-play"></i>
+                                Use Model
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        container.innerHTML = modelsHTML;
+        
+        // Add staggered animation
+        const modelCards = container.querySelectorAll('.model-card');
+        modelCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.3s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }
+
+    updateModelsStats() {
+        const onlineModels = this.availableModels.filter(m => m.status === 'online').length;
+        const totalModels = this.availableModels.length;
+        const avgResponseTime = this.calculateAverageResponseTime();
+
+        const onlineElement = document.getElementById('modelsOnline');
+        const totalElement = document.getElementById('totalModels');
+        const avgResponseElement = document.getElementById('avgResponseTime');
+
+        if (onlineElement) onlineElement.textContent = onlineModels;
+        if (totalElement) totalElement.textContent = totalModels;
+        if (avgResponseElement) avgResponseElement.textContent = avgResponseTime + 'ms';
+    }
+
+    calculateAverageResponseTime() {
+        if (this.availableModels.length === 0) return 0;
+        
+        const totalTime = this.availableModels.reduce((sum, model) => {
+            return sum + (model.response_time || 0);
+        }, 0);
+        
+        return Math.round(totalTime / this.availableModels.length);
+    }
+
+    handleError(message, error) {
+        if (window.app && typeof window.app.handleError === 'function') {
+            window.app.handleError(message, error);
+        }
+    }
+}
+
+// Global utility functions with enhanced styling
+function selectProject(projectId) {
+    if (window.app && window.app.features.projects) {
+        window.app.features.projects.selectProject(projectId);
+    }
+}
+
+function editProject(projectId) {
+    if (window.app && window.app.features.projects) {
+        window.app.features.projects.editProject(projectId);
+    }
+}
+
+function testModel(modelId) {
+    if (window.app && window.app.features.models) {
+        window.app.features.models.testModel(modelId);
+    }
+}
+
+function useModel(modelId) {
+    if (window.app && window.app.features.models) {
+        window.app.features.models.useModel(modelId);
+    }
+}
+
+function copyCode() {
+    const codeElement = document.getElementById('generatedCode');
+    if (codeElement) {
+        navigator.clipboard.writeText(codeElement.textContent).then(() => {
+            window.ui.showToast('Code copied to clipboard!', 'success');
+        }).catch(() => {
+            window.ui.showToast('Failed to copy code', 'error');
+        });
+    }
+}
+
+function testGenerated() {
+    const codeElement = document.getElementById('generatedCode');
+    if (codeElement && window.app.features.codeGeneration) {
+        window.app.features.codeGeneration.testGeneratedCode(codeElement.textContent);
+    }
+}
+
+function saveToProject() {
+    const codeElement = document.getElementById('generatedCode');
+    if (codeElement && window.app.features.projects) {
+        window.app.features.projects.saveCode(codeElement.textContent);
+    }
+}
+
+function copyToClipboard(generationId) {
+    const codeElement = document.getElementById('generatedCode');
+    if (codeElement) {
+        navigator.clipboard.writeText(codeElement.textContent).then(() => {
+            window.ui.showToast('Copied to clipboard!', 'success');
+            
+            // Add visual feedback
+            const copyBtn = document.querySelector('.code-copy-btn');
+            if (copyBtn) {
+                copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                copyBtn.classList.add('btn-success');
+                setTimeout(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                    copyBtn.classList.remove('btn-success');
+                }, 2000);
+            }
+        }).catch(() => {
+            window.ui.showToast('Failed to copy to clipboard', 'error');
+        });
     }
 }
 
 function createProject() {
-    const content = `
-        <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Create New Project</h3>
-            <form id="createProjectForm" class="space-y-4">
-                <div>
-                    <label for="projectName" class="block text-sm font-medium text-gray-700">Project Name</label>
-                    <input type="text" id="projectName" name="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                </div>
-                
-                <div>
-                    <label for="projectDescription" class="block text-sm font-medium text-gray-700">Description (Optional)</label>
-                    <textarea id="projectDescription" name="description" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
-                </div>
-                
-                <div class="flex justify-end space-x-3 pt-4">
-                    <button type="button" onclick="App.closeModal()" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
-                        Create Project
-                    </button>
-                </div>
-            </form>
-        </div>
-    `;
+    window.ui.openModal('createProjectModal');
+}
+
+function toggleAdvancedOptions() {
+    const advancedOptions = document.getElementById('advancedOptions');
+    const toggleIcon = document.getElementById('advancedToggleIcon');
+    const toggleText = document.getElementById('advancedToggleText');
     
-    App.showModal(content);
-    
-    // Handle form submission
-    document.getElementById('createProjectForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+    if (advancedOptions) {
+        const isHidden = advancedOptions.classList.contains('hidden');
         
-        const formData = new FormData(e.target);
-        const data = {
-            name: formData.get('name'),
-            description: formData.get('description') || null
-        };
-        
-        try {
-            const project = await API.post('/projects/', data);
-            App.projects.push(project);
-            App.updateProjectsList();
-            App.updateProjectSelect();
-            App.closeModal();
-            UI.showNotification('Project created successfully!', 'success');
-        } catch (error) {
-            console.error('Create project error:', error);
-            UI.showNotification(`Failed to create project: ${error.message}`, 'error');
-        }
-    });
-}
-
-function viewProject(projectId) {
-    // Implementation for viewing project details
-    UI.showNotification('Project view not implemented yet', 'info');
-}
-
-function generateForProject(projectId) {
-    // Set project in generate form and switch to generate section
-    document.getElementById('projectSelect').value = projectId;
-    showSection('generate');
-}
-
-function copyCode() {
-    const code = document.getElementById('generatedCode').textContent;
-    navigator.clipboard.writeText(code).then(() => {
-        UI.showNotification('Code copied to clipboard!', 'success');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        UI.showNotification('Failed to copy code', 'error');
-    });
-}
-
-function testGenerated() {
-    if (App.currentGeneration) {
-        document.getElementById('testCode').value = App.currentGeneration.code;
-        document.getElementById('testLanguage').value = App.currentGeneration.language;
-        showSection('test');
-    }
-}
-
-async function validateCode() {
-    const code = document.getElementById('testCode').value;
-    const language = document.getElementById('testLanguage').value;
-    
-    if (!code.trim()) {
-        UI.showNotification('Please enter code to validate', 'warning');
-        return;
-    }
-    
-    try {
-        const result = await API.post('/test/validate-only', {
-            code: code,
-            language: language
-        });
-        
-        App.showTestResult(result);
-        
-        if (result.success) {
-            UI.showNotification('Code validation passed!', 'success');
+        if (isHidden) {
+            advancedOptions.classList.remove('hidden');
+            advancedOptions.style.animation = 'slideDown 0.3s ease-out';
+            if (toggleIcon) toggleIcon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            if (toggleText) toggleText.textContent = 'Hide Advanced Options';
         } else {
-            UI.showNotification('Code validation found issues', 'warning');
+            advancedOptions.style.animation = 'slideUp 0.3s ease-out';
+            setTimeout(() => {
+                advancedOptions.classList.add('hidden');
+            }, 300);
+            if (toggleIcon) toggleIcon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            if (toggleText) toggleText.textContent = 'Show Advanced Options';
         }
-        
-    } catch (error) {
-        console.error('Validation error:', error);
-        UI.showNotification(`Validation failed: ${error.message}`, 'error');
     }
 }
 
-async function loadMonitoringData() {
-    try {
-        const [health, stats] = await Promise.all([
-            API.get('/health/detailed'),
-            API.get('/models/usage/summary')
-        ]);
-        
-        updateSystemHealth(health);
-        updateUsageStats(stats);
-        
-    } catch (error) {
-        console.error('Error loading monitoring data:', error);
-        UI.showNotification('Failed to load monitoring data', 'error');
+function showDemo() {
+    // Implementation for demo functionality
+    window.ui.showToast('Demo feature coming soon!', 'info');
+}
+
+// Character count for textareas
+function updateCharCount(textarea, countElement) {
+    if (countElement) {
+        countElement.textContent = textarea.value.length;
     }
 }
 
-function updateSystemHealth(health) {
-    const container = document.getElementById('systemHealth');
+// Enhanced debug functions (removed console logs)
+window.debugAoede = function() {
+    const debugInfo = {
+        api: window.api ? 'Loaded' : 'NOT LOADED',
+        ui: window.ui ? 'Loaded' : 'NOT LOADED',
+        auth: window.auth ? 'Loaded' : 'NOT LOADED',
+        app: window.app ? 'Loaded' : 'NOT LOADED'
+    };
     
-    container.innerHTML = `
-        <div class="space-y-3">
-            <div class="flex items-center justify-between">
-                <span class="text-sm font-medium">Overall Status</span>
-                <span class="badge badge-${health.status === 'healthy' ? 'success' : 'error'}">
-                    ${health.status}
-                </span>
-            </div>
-            
-            <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                    <span>CPU Usage</span>
-                    <span>${health.system?.cpu_percent?.toFixed(1) || 0}%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${health.system?.cpu_percent || 0}%"></div>
-                </div>
-            </div>
-            
-            <div class="space-y-2">
-                <div class="flex justify-between text-sm">
-                    <span>Memory Usage</span>
-                    <span>${health.system?.memory_percent?.toFixed(1) || 0}%</span>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-green-600 h-2 rounded-full" style="width: ${health.system?.memory_percent || 0}%"></div>
-                </div>
-            </div>
-            
-            <div class="pt-2 border-t">
-                <p class="text-xs text-gray-500">
-                    Last updated: ${new Date().toLocaleTimeString()}
-                </p>
-            </div>
-        </div>
-    `;
-}
-
-function updateUsageStats(stats) {
-    const container = document.getElementById('usageStats');
+    if (window.app) {
+        debugInfo.appInitialized = window.app.isInitialized;
+        debugInfo.appFeatures = Object.keys(window.app.features || {});
+    }
     
-    container.innerHTML = `
-        <div class="space-y-3">
-            <div class="grid grid-cols-2 gap-4">
-                <div class="text-center">
-                    <p class="text-2xl font-semibold text-blue-600">${stats.total_requests || 0}</p>
-                    <p class="text-sm text-gray-500">Total Requests</p>
-                </div>
-                <div class="text-center">
-                    <p class="text-2xl font-semibold text-green-600">${stats.total_tokens || 0}</p>
-                    <p class="text-sm text-gray-500">Total Tokens</p>
-                </div>
-            </div>
-            
-            <div class="pt-2 border-t">
-                <div class="flex justify-between text-sm">
-                    <span>Success Rate</span>
-                    <span class="font-medium">${stats.success_rate || 100}%</span>
-                </div>
-                <div class="flex justify-between text-sm mt-1">
-                    <span>Avg Response Time</span>
-                    <span class="font-medium">${stats.average_response_time || 0}ms</span>
-                </div>
-            </div>
-            
-            <div class="pt-2 border-t">
-                <p class="text-xs text-gray-500">                    Period: ${stats.time_period || 'Last 24 hours'}
-                </p>
-            </div>
-        </div>
-    `;
-}
+    if (window.ui) {
+        debugInfo.currentView = window.ui.currentView;
+    }
+    
+    if (window.auth) {
+        debugInfo.authenticated = window.auth.isAuthenticated;
+        debugInfo.currentUser = window.auth.currentUser;
+    }
+    
+    return debugInfo;
+};
 
-// App object is available globally for manual initialization
+// Enhanced utility functions
+window.forceHideLoading = function() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.display = 'none';
+    }
+};
+
+window.forceShowSection = function(sectionName) {
+    // Hide all sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(function(section) {
+        section.classList.add('hidden');
+        section.classList.remove('active');
+    });
+    
+    // Show target section
+    const targetSection = document.getElementById(sectionName);
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        targetSection.classList.add('active');
+        targetSection.style.animation = 'fadeInUp 0.5s ease-out';
+    }
+};
+
+// Add service worker registration method to AoedeApp prototype
+AoedeApp.prototype.registerServiceWorker = async function() {
+    if ('serviceWorker' in navigator) {
+        try {
+            const registration = await navigator.serviceWorker.register('/static/sw.js');
+            this.serviceWorker = registration;
+            
+            // Handle service worker updates
+            registration.addEventListener('updatefound', () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener('statechange', () => {
+                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                        this.showUpdateNotification();
+                    }
+                });
+            });
+            
+            return registration;
+        } catch (error) {
+            console.error('Service worker registration failed:', error);
+            return null;
+        }
+    }
+    return null;
+};
+
+// Add enterprise features initialization
+AoedeApp.prototype.initializeEnterpriseFeatures = function() {
+    // Initialize PWA features
+    this.initializePWAFeatures();
+    
+    // Initialize performance monitoring
+    this.initializePerformanceMonitoring();
+    
+    // Initialize offline support
+    this.initializeOfflineSupport();
+    
+    // Initialize security features
+    this.initializeSecurityFeatures();
+};
+
+// PWA Features
+AoedeApp.prototype.initializePWAFeatures = function() {
+    // Add to home screen prompt
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        
+        // Show install button if needed
+        const installButton = document.getElementById('installApp');
+        if (installButton) {
+            installButton.style.display = 'block';
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                    installButton.style.display = 'none';
+                }
+            });
+        }
+    });
+    
+    // Handle app installed
+    window.addEventListener('appinstalled', () => {
+        if (this.ui && this.ui.showToast) {
+            this.ui.showToast('Aoede has been installed successfully!', 'success');
+        }
+    });
+};
+
+// Performance monitoring
+AoedeApp.prototype.initializePerformanceMonitoring = function() {
+    // Monitor Core Web Vitals
+    if ('web-vital' in window) {
+        import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+            getCLS(this.sendToAnalytics.bind(this));
+            getFID(this.sendToAnalytics.bind(this));
+            getFCP(this.sendToAnalytics.bind(this));
+            getLCP(this.sendToAnalytics.bind(this));
+            getTTFB(this.sendToAnalytics.bind(this));
+        });
+    }
+};
+
+// Offline support
+AoedeApp.prototype.initializeOfflineSupport = function() {
+    // Monitor online/offline status
+    window.addEventListener('online', () => {
+        if (this.ui && this.ui.showToast) {
+            this.ui.showToast('Connection restored', 'success');
+        }
+        this.syncOfflineActions();
+    });
+    
+    window.addEventListener('offline', () => {
+        if (this.ui && this.ui.showToast) {
+            this.ui.showToast('Working offline', 'warning');
+        }
+    });
+};
+
+// Security features
+AoedeApp.prototype.initializeSecurityFeatures = function() {
+    // CSP violation reporting
+    document.addEventListener('securitypolicyviolation', (e) => {
+        console.error('CSP Violation:', e.violatedDirective, e.blockedURI);
+    });
+    
+    // Prevent XSS
+    this.sanitizeUserInputs();
+};
+
+// Utility methods
+AoedeApp.prototype.showUpdateNotification = function() {
+    if (this.ui && this.ui.showToast) {
+        this.ui.showToast('App update available. Refresh to apply.', 'info', {
+            persistent: true,
+            action: {
+                text: 'Refresh',
+                callback: () => window.location.reload()
+            }
+        });
+    }
+};
+
+AoedeApp.prototype.sendToAnalytics = function(metric) {
+    // Send performance metrics to analytics
+    if (this.isProduction) {
+        console.log('Performance metric:', metric.name, metric.value);
+    }
+};
+
+AoedeApp.prototype.syncOfflineActions = function() {
+    // Sync any offline actions when back online
+    if (this.serviceWorker && this.serviceWorker.sync) {
+        this.serviceWorker.sync.register('background-sync');
+    }
+};
+
+AoedeApp.prototype.sanitizeUserInputs = function() {
+    // Add input sanitization for security
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('input', (e) => {
+            // Basic XSS prevention
+            e.target.value = e.target.value.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+        });
+    });
+};
+
+// Create and initialize application
+window.AoedeApp = AoedeApp;
+window.FeatureBase = FeatureBase;
+window.app = new AoedeApp();
