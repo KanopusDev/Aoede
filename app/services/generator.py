@@ -15,7 +15,7 @@ import time
 
 from app.core.config import settings, SUPPORTED_LANGUAGES
 from app.core.logging import get_logger
-from app.services.ai_model import ai_model_service
+from app.services.models import ai_model_service
 from app.models import CodeGeneration, Project, Language
 from app.core.database import get_db_session
 

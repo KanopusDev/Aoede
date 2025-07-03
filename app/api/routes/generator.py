@@ -7,10 +7,10 @@ from typing import Optional, Dict, Any, List
 from uuid import UUID
 import json
 
-from app.services.code_generation import code_generation_service
+from app.services.generator import code_generation_service
 from app.core.logging import get_logger
 from app.models import Language
-from app.middleware.rate_limit import check_ip_rate_limit
+from app.middleware.limitter import check_ip_rate_limit
 
 logger = get_logger(__name__)
 router = APIRouter()

@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any
 from uuid import UUID
 
-from app.services.testing_validation import testing_validation_service
+from app.services.tester import testing_validation_service
 from app.core.logging import get_logger
 from app.models import Language
 

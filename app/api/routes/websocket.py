@@ -10,9 +10,9 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
 from uuid import UUID
 
 from app.core.config import settings
-from app.services.ai_model import ai_model_service
-from app.services.code_generation import code_generation_service
-from app.services.testing_validation import testing_validation_service
+from app.services.models import ai_model_service
+from app.services.generator import code_generation_service
+from app.services.tester import testing_validation_service
 
 logger = logging.getLogger(__name__)
 

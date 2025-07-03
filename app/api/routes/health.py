@@ -8,7 +8,7 @@ import psutil
 import asyncio
 
 from app.core.database import db_manager, get_redis
-from app.services.ai_model import ai_model_service
+from app.services.models import ai_model_service
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
@@ -60,7 +60,8 @@ async def detailed_health_check():
         except Exception as e:
             logger.error(f"AI models health check failed: {e}")
             ai_models_healthy = False
-          # System metrics
+        
+        # System metrics
         cpu_percent = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage('/')

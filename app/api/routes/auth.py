@@ -58,8 +58,7 @@ class UserResponse(BaseModel):
     theme_preference: str
     timezone: str
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class AuthResponse(BaseModel):
@@ -168,7 +167,7 @@ async def register_user(user_data: UserRegistrationRequest, request: Request):
         
         logger.info(f"User registered: {user.username} from IP {get_client_ip(request)}")
         
-        return UserResponse.from_orm(user)
+        return UserResponse.model_validate(user)
         
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
@@ -201,7 +200,7 @@ async def login_user(user_data: UserLoginRequest, request: Request):
         return AuthResponse(
             access_token=access_token,
             refresh_token=refresh_token,
-            user=UserResponse.from_orm(user)
+            user=UserResponse.model_validate(user)
         )
         
     except AuthenticationError:
@@ -255,7 +254,7 @@ async def logout_user(current_user: User = Depends(get_current_active_user),
 @router.get("/me", response_model=UserResponse)
 async def get_current_user_profile(current_user: User = Depends(get_current_active_user)):
     """Get current user profile"""
-    return UserResponse.from_orm(current_user)
+    return UserResponse.model_validate(current_user)
 
 
 @router.put("/me", response_model=UserResponse)
@@ -290,7 +289,7 @@ async def update_user_profile(
                 await session.refresh(current_user)
         
         logger.info(f"User profile updated: {current_user.username}")
-        return UserResponse.from_orm(current_user)
+        return UserResponse.model_validate(current_user)
         
     except Exception as e:
         logger.error(f"Profile update failed: {e}")

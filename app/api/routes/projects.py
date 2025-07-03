@@ -43,8 +43,7 @@ class ProjectResponse(BaseModel):
     updated_at: Optional[str]
     code_generations_count: int
     
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class ProjectDetailResponse(ProjectResponse):
@@ -126,7 +125,8 @@ async def list_projects(
                     id=project.id,
                     name=project.name,
                     description=project.description,
-                    status=project.status,                    user_id=project.user_id,
+                    status=project.status,
+                    user_id=project.user_id,
                     created_at=project.created_at.isoformat(),
                     updated_at=project.updated_at.isoformat() if project.updated_at else None,
                     code_generations_count=gen_count

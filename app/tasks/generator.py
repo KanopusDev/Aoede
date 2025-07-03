@@ -7,8 +7,8 @@ from typing import Dict, Any
 from celery import Task
 
 from app.core.celery import celery_app
-from app.services.code_generation import code_generation_service
-from app.services.chunk_management import chunk_management_service, ContentType
+from app.services.generator import code_generation_service
+from app.services.chunker import chunk_management_service, ContentType
 from app.api.routes.websocket import broadcast_generation_progress
 
 logger = logging.getLogger(__name__)
@@ -185,7 +185,7 @@ def chunk_and_generate_code(self, generation_request: Dict[str, Any]):
         )
         
         # Assemble results
-        from app.services.chunk_management import output_assembler
+        from app.services.chunker import output_assembler
         
         final_result = output_assembler.assemble_responses(
             chunk_results, content_type

@@ -53,7 +53,6 @@ class Project(Base):
     # Relationships
     user = relationship("User", back_populates="projects")
     code_generations = relationship("CodeGeneration", back_populates="project", cascade="all, delete-orphan")
-    code_generations = relationship("CodeGeneration", back_populates="project", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<Project(id={self.id}, name={self.name}, status={self.status})>"

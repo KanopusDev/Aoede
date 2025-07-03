@@ -109,13 +109,13 @@ async def get_redis():
 
 @asynccontextmanager
 async def get_db_session():
-    """Context manager for database sessions"""
+    """Get database session context manager"""
     async with AsyncSessionLocal() as session:
         try:
             yield session
-            await session.commit()
-        except Exception:
+        except Exception as e:
             await session.rollback()
+            logger.error(f"Database session error: {e}")
             raise
         finally:
             await session.close()

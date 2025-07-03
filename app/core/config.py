@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings
 from pydantic import validator
 from typing import List, Optional
 import os
+import secrets
 
 
 class Settings(BaseSettings):
@@ -18,8 +19,8 @@ class Settings(BaseSettings):
     WORKERS: int = 4
     
     # Security
-    SECRET_KEY: str
-    JWT_SECRET_KEY: str
+    SECRET_KEY: str = secrets.token_urlsafe(32)
+    JWT_SECRET_KEY: str = secrets.token_urlsafe(32)
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRATION_HOURS: int = 24
     ALLOWED_HOSTS: List[str] = ["localhost", "127.0.0.1", "*"]

@@ -17,10 +17,10 @@ from app.core.config import settings
 from app.core.database import init_db
 from app.core.logging import setup_logging
 from app.api.routes import api_router
-from app.middleware.rate_limit import RateLimitMiddleware, init_rate_limiter
+from app.middleware.limitter import RateLimitMiddleware, init_rate_limiter
 from app.middleware.security import SecurityMiddleware
 from app.middleware.monitoring import MonitoringMiddleware
-from app.services.ai_model import ai_model_service
+from app.services.models import ai_model_service
 import redis.asyncio as redis
 
 # Setup structured logging

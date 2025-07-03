@@ -5,10 +5,10 @@ from fastapi import APIRouter, HTTPException, Depends, Request
 from pydantic import BaseModel
 from typing import List, Dict, Any, Optional
 
-from app.services.ai_model import ai_model_service
+from app.services.models import ai_model_service
 from app.core.config import MODEL_CONFIGS
 from app.core.logging import get_logger
-from app.middleware.rate_limit import check_ip_rate_limit
+from app.middleware.limitter import check_ip_rate_limit
 
 logger = get_logger(__name__)
 router = APIRouter()

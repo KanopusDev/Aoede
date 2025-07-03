@@ -70,6 +70,7 @@ class User(Base):
     projects = relationship("Project", back_populates="user", cascade="all, delete-orphan")
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
     api_keys = relationship("UserAPIKey", back_populates="user", cascade="all, delete-orphan")
+    login_history = relationship("UserLoginHistory", back_populates="user", cascade="all, delete-orphan")
     
     def __repr__(self):
         return f"<User(id={self.id}, username={self.username}, email={self.email}, role={self.role})>"
@@ -198,6 +199,39 @@ class UserAPIKey(Base):
     
     # Relationships
     user = relationship("User", back_populates="api_keys")
+    
+    def __repr__(self):
+        return f"<UserAPIKey(id={self.id}, user_id={self.user_id}, name={self.key_name})>"
+    
+    def generate_key(self) -> str:
+        """Generate new API key"""
+        key = secrets.token_urlsafe(32)
+        self.key_hash = hashlib.sha256(key.encode()).hexdigest()
+        self.key_prefix = key[:8]
+        return key
+    
+    def verify_key(self, key: str) -> bool:
+        """Verify API key"""
+        return hashlib.sha256(key.encode()).hexdigest() == self.key_hash
+
+
+class UserLoginHistory(Base):
+    """User login history model"""
+    __tablename__ = "user_login_history"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
+    ip_address = Column(String(45))
+    user_agent = Column(String(500))
+    success = Column(Boolean, nullable=False, index=True)
+    failure_reason = Column(String(255))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # Relationships
+    user = relationship("User", back_populates="login_history")
+    
+    def __repr__(self):
+        return f"<UserLoginHistory(id={self.id}, user_id={self.user_id}, success={self.success})>"
     
     def __repr__(self):
         return f"<UserAPIKey(id={self.id}, user_id={self.user_id}, name={self.key_name})>"

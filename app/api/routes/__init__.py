@@ -2,7 +2,7 @@
 API Routes for Aoede application
 """
 from fastapi import APIRouter
-from app.api.routes import projects, code_generation, testing, ai_models, health, websocket, auth
+from app.api.routes import generator, models, projects, testing, health, websocket, auth
 
 # Create main API router
 api_router = APIRouter()
@@ -27,7 +27,7 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    code_generation.router,
+    generator.router,
     prefix="/generate",
     tags=["Code Generation"]
 )
@@ -39,7 +39,7 @@ api_router.include_router(
 )
 
 api_router.include_router(
-    ai_models.router,
+    models.router,
     prefix="/models",
     tags=["AI Models"]
 )
