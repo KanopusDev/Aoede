@@ -3,6 +3,7 @@ Authentication service for user management and session handling
 """
 import secrets
 import hashlib
+import uuid
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any, Tuple
 from uuid import UUID
@@ -120,23 +121,37 @@ class AuthService:
                 result = await session.execute(query)
                 user = result.scalar_one_or_none()
                 
-                # Log login attempt
-                await self._log_login_attempt(
-                    user.id if user else None,
-                    ip_address,
-                    user_agent,
-                    success=False
-                )
-                
                 if not user:
+                    # Log failed login attempt for non-existent user
+                    await self._log_login_attempt(
+                        None,  # No user ID since user doesn't exist
+                        ip_address,
+                        user_agent,
+                        success=False,
+                        failure_reason="User not found"
+                    )
                     raise AuthenticationError("Invalid username or password")
                 
                 # Check if account is locked
                 if user.is_locked():
+                    await self._log_login_attempt(
+                        user.id,
+                        ip_address,
+                        user_agent,
+                        success=False,
+                        failure_reason="Account locked"
+                    )
                     raise AuthenticationError("Account is temporarily locked")
                 
                 # Check user status
                 if user.status != UserStatus.ACTIVE:
+                    await self._log_login_attempt(
+                        user.id,
+                        ip_address,
+                        user_agent,
+                        success=False,
+                        failure_reason=f"Inactive account: {user.status}"
+                    )
                     raise AuthenticationError("Account is not active")
                 
                 # Verify password
@@ -144,33 +159,54 @@ class AuthService:
                     # Increment failed attempts
                     user.failed_login_attempts += 1
                     
+                    # Log failed login attempt with reason
+                    failure_reason = "Invalid password"
+                    
                     # Lock account if too many failed attempts
                     if user.failed_login_attempts >= self.max_login_attempts:
                         user.lock_account(self.account_lockout_duration)
-                        await session.commit()
-                        raise AuthenticationError("Too many failed attempts. Account locked.")
+                        failure_reason = "Account locked due to too many failed attempts"
                     
                     await session.commit()
-                    raise AuthenticationError("Invalid username or password")
+                    
+                    # Log the failed attempt
+                    await self._log_login_attempt(
+                        user.id,
+                        ip_address,
+                        user_agent,
+                        success=False,
+                        failure_reason=failure_reason
+                    )
+                    
+                    if user.failed_login_attempts >= self.max_login_attempts:
+                        raise AuthenticationError("Too many failed attempts. Account locked.")
+                    else:
+                        raise AuthenticationError("Invalid username or password")
                 
                 # Successful login - reset failed attempts
                 user.failed_login_attempts = 0
                 user.last_login_at = datetime.utcnow()
                 
-                # Generate tokens
-                access_token, refresh_token = await self._create_user_session(
-                    user, ip_address, user_agent
-                )
-                
+                # First update the user record
                 await session.commit()
                 
-                # Log successful login
-                await self._log_login_attempt(
-                    user.id,
-                    ip_address,
-                    user_agent,
-                    success=True
-                )
+                try:
+                    # Generate tokens and create session
+                    access_token, refresh_token = await self._create_user_session(
+                        user, ip_address, user_agent
+                    )
+                    
+                    # Log successful login
+                    await self._log_login_attempt(
+                        user.id,
+                        ip_address,
+                        user_agent,
+                        success=True
+                    )
+                except Exception as session_error:
+                    logger.error(f"Session creation failed during login: {session_error}")
+                    # Re-throw with appropriate auth error
+                    raise AuthenticationError("Authentication succeeded but session creation failed")
                 
                 logger.info(f"User authenticated successfully: {user.username}")
                 return user, access_token, refresh_token
@@ -190,27 +226,63 @@ class AuthService:
         """Create new user session and return tokens"""
         try:
             async with get_db_session() as session:
-                # Generate tokens
-                access_token = self._generate_jwt_token(
-                    user.id, 
-                    expires_delta=timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-                )
-                refresh_token = secrets.token_urlsafe(32)
+                # First, check for existing sessions with the same device fingerprint and revoke them
+                if ip_address and user_agent:
+                    # Look for existing session from same device
+                    existing_query = select(UserSession).where(
+                        UserSession.user_id == user.id,
+                        UserSession.ip_address == ip_address,
+                        UserSession.user_agent == user_agent,
+                        UserSession.is_active == True,
+                        UserSession.revoked == False
+                    )
+                    existing_result = await session.execute(existing_query)
+                    existing_sessions = existing_result.scalars().all()
+                    
+                    # Revoke existing sessions from same device
+                    for existing_session in existing_sessions:
+                        existing_session.revoke()
                 
-                # Create session record
-                user_session = UserSession(
-                    user_id=user.id,
-                    session_token=access_token,
-                    refresh_token=refresh_token,
-                    ip_address=ip_address,
-                    user_agent=user_agent,
-                    expires_at=datetime.utcnow() + timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-                )
+                # Generate new tokens with retry logic to avoid conflicts
+                max_retries = 3
+                for attempt in range(max_retries):
+                    # Generate tokens
+                    access_token = self._generate_jwt_token(
+                        user.id, 
+                        expires_delta=timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+                    )
+                    refresh_token = secrets.token_urlsafe(32)
+                    
+                    # Check if tokens already exist
+                    token_check = select(UserSession).where(
+                        (UserSession.session_token == access_token) | 
+                        (UserSession.refresh_token == refresh_token)
+                    )
+                    token_result = await session.execute(token_check)
+                    if token_result.scalar_one_or_none():
+                        # Token conflict, try again with new tokens
+                        logger.warning(f"Token conflict detected, retrying ({attempt+1}/{max_retries})")
+                        continue
+                    
+                    # Create session record with unique ID
+                    user_session = UserSession(
+                        id=uuid.uuid4(),
+                        user_id=user.id,
+                        session_token=access_token,
+                        refresh_token=refresh_token,
+                        ip_address=ip_address,
+                        user_agent=user_agent,
+                        device_fingerprint=None,  # Could compute fingerprint in the future
+                        expires_at=datetime.utcnow() + timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+                    )
+                    
+                    session.add(user_session)
+                    await session.commit()
+                    
+                    return access_token, refresh_token
                 
-                session.add(user_session)
-                await session.commit()
-                
-                return access_token, refresh_token
+                # If we reached here, we couldn't generate unique tokens after max_retries
+                raise ValueError("Failed to generate unique session tokens after multiple attempts")
                 
         except Exception as e:
             logger.error(f"Session creation failed: {e}")
@@ -237,19 +309,45 @@ class AuthService:
                 if not user_session or not user_session.is_valid():
                     raise AuthenticationError("Invalid or expired refresh token")
                 
-                # Generate new tokens
-                new_access_token = self._generate_jwt_token(
-                    user_session.user_id,
-                    expires_delta=timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
-                )
-                new_refresh_token = secrets.token_urlsafe(32)
+                # Ensure user account is still valid
+                if user_session.user.status != UserStatus.ACTIVE:
+                    # Revoke session if user is no longer active
+                    user_session.revoke()
+                    await session.commit()
+                    raise AuthenticationError("User account is not active")
                 
-                # Update session
-                user_session.refresh(new_access_token, new_refresh_token)
-                await session.commit()
+                # Generate new tokens with retry logic to avoid conflicts
+                max_retries = 3
+                for attempt in range(max_retries):
+                    # Generate new tokens
+                    new_access_token = self._generate_jwt_token(
+                        user_session.user_id,
+                        expires_delta=timedelta(minutes=JWT_ACCESS_TOKEN_EXPIRE_MINUTES)
+                    )
+                    new_refresh_token = secrets.token_urlsafe(32)
+                    
+                    # Check if new tokens already exist in other sessions
+                    token_check = select(UserSession).where(
+                        (UserSession.id != user_session.id) & (
+                            (UserSession.session_token == new_access_token) | 
+                            (UserSession.refresh_token == new_refresh_token)
+                        )
+                    )
+                    token_result = await session.execute(token_check)
+                    if token_result.scalar_one_or_none():
+                        # Token conflict, try again with new tokens
+                        logger.warning(f"Token conflict detected during refresh, retrying ({attempt+1}/{max_retries})")
+                        continue
+                    
+                    # Update session with new tokens
+                    user_session.refresh(new_access_token, new_refresh_token)
+                    await session.commit()
+                    
+                    logger.info(f"Session refreshed for user: {user_session.user.username}")
+                    return new_access_token, new_refresh_token
                 
-                logger.info(f"Session refreshed for user: {user_session.user.username}")
-                return new_access_token, new_refresh_token
+                # If we reached here, we couldn't generate unique tokens after max_retries
+                raise ValueError("Failed to generate unique session tokens after multiple attempts")
                 
         except HTTPException:
             raise
@@ -274,11 +372,18 @@ class AuthService:
                 user_session = result.scalar_one_or_none()
                 
                 if user_session:
+                    # Mark session as revoked
                     user_session.revoke()
-                    await session.commit()
+                    
+                    # Log the logout action
                     logger.info(f"User logged out: {user_id}")
+                    
+                    # Commit the changes
+                    await session.commit()
                     return True
                     
+                # No active session found
+                logger.warning(f"No active session found for token during logout: {user_id}")
                 return False
                 
         except Exception as e:
@@ -290,20 +395,34 @@ class AuthService:
         try:
             user_id = self._decode_jwt_token(access_token)
             if not user_id:
+                logger.warning("Invalid token format or expired token")
                 return None
                 
             async with get_db_session() as session:
                 # Verify session is valid
                 session_query = select(UserSession).where(
                     UserSession.session_token == access_token,
-                    UserSession.user_id == user_id,
-                    UserSession.is_active == True,
-                    UserSession.revoked == False
+                    UserSession.user_id == user_id
                 )
                 session_result = await session.execute(session_query)
                 user_session = session_result.scalar_one_or_none()
                 
-                if not user_session or not user_session.is_valid():
+                # Check if session exists at all
+                if not user_session:
+                    logger.warning(f"No session found for token {access_token[:10]}...")
+                    return None
+                
+                # Check if session is still valid
+                if not user_session.is_active or user_session.revoked:
+                    logger.warning(f"Session {user_session.id} is no longer active or has been revoked")
+                    return None
+                
+                # Check if session is expired
+                if user_session.is_expired():
+                    logger.warning(f"Session {user_session.id} has expired")
+                    # Automatically revoke expired sessions to keep the DB clean
+                    user_session.revoke()
+                    await session.commit()
                     return None
                 
                 # Get user
@@ -311,13 +430,19 @@ class AuthService:
                 user_result = await session.execute(user_query)
                 user = user_result.scalar_one_or_none()
                 
-                if user and user.status == UserStatus.ACTIVE:
-                    # Update last activity
-                    user_session.last_activity = datetime.utcnow()
-                    await session.commit()
-                    return user
+                if not user:
+                    logger.warning(f"User {user_id} referenced in session doesn't exist")
+                    return None
                     
-                return None
+                # Check if user is active
+                if user.status != UserStatus.ACTIVE:
+                    logger.warning(f"User {user_id} account is not active: {user.status}")
+                    return None
+                
+                # Update last activity timestamp
+                user_session.last_activity = datetime.utcnow()
+                await session.commit()
+                return user
                 
         except Exception as e:
             logger.error(f"Get current user failed: {e}")
@@ -401,19 +526,34 @@ class AuthService:
     ):
         """Log login attempt"""
         try:
-            if not user_id:
-                return
-                
+            # Always log login attempts, even if user_id is None (failed login with non-existent user)
             async with get_db_session() as session:
+                # Create basic device fingerprint from available data
+                device_fingerprint = None
+                if ip_address and user_agent:
+                    fingerprint_source = f"{ip_address}|{user_agent}"
+                    device_fingerprint = hashlib.sha256(fingerprint_source.encode()).hexdigest()
+                
+                # Create login history record
                 login_history = UserLoginHistory(
-                    user_id=user_id,
+                    id=uuid.uuid4(),  # Ensure unique ID
+                    user_id=user_id,  # Can be None for non-existent users
                     ip_address=ip_address,
                     user_agent=user_agent,
+                    device_fingerprint=device_fingerprint,
                     success=success,
-                    failure_reason=failure_reason
+                    failure_reason=failure_reason,
+                    # Approximate location could be added in the future based on IP
                 )
+                
                 session.add(login_history)
                 await session.commit()
+                
+                # Log additional security information
+                if success:
+                    logger.info(f"Successful login recorded for user ID: {user_id} from IP: {ip_address}")
+                else:
+                    logger.warning(f"Failed login attempt for user ID: {user_id} from IP: {ip_address}, reason: {failure_reason}")
                 
         except Exception as e:
             logger.error(f"Failed to log login attempt: {e}")

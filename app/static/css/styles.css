@@ -1,0 +1,1355 @@
+/*! tailwindcss v3.4.0 | MIT License | https://tailwindcss.com */
+
+/*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+*,
+::before,
+::after {
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: #e5e7eb; /* 2 */
+}
+
+::before,
+::after {
+  --tw-content: '';
+}
+
+/*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+html {
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
+  tab-size: 4; /* 3 */
+  font-family: Inter, sans-serif; /* 4 */
+  font-feature-settings: normal; /* 5 */
+  font-variation-settings: normal; /* 6 */
+  -webkit-tap-highlight-color: transparent; /* 7 */
+}
+
+/*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+body {
+  margin: 0; /* 1 */
+  line-height: inherit; /* 2 */
+}
+
+/*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+hr {
+  height: 0; /* 1 */
+  color: inherit; /* 2 */
+  border-top-width: 1px; /* 3 */
+}
+
+/*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+abbr:where([title]) {
+  text-decoration: underline dotted;
+}
+
+/*
+Remove the default font size and weight for headings.
+*/
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*
+Add the correct font weight in Edge and Safari.
+*/
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+/*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+code,
+kbd,
+samp,
+pre {
+  font-family: Fira Code, monospace; /* 1 */
+  font-feature-settings: normal; /* 2 */
+  font-variation-settings: normal; /* 3 */
+  font-size: 1em; /* 4 */
+}
+
+/*
+Add the correct font size in all browsers.
+*/
+
+small {
+  font-size: 80%;
+}
+
+/*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+table {
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
+}
+
+/*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  font-weight: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  color: inherit; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 3 */
+}
+
+/*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+button,
+select {
+  text-transform: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button; /* 1 */
+  background-color: transparent; /* 2 */
+  background-image: none; /* 2 */
+}
+
+/*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+:-moz-focusring {
+  outline: auto;
+}
+
+/*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+:-moz-ui-invalid {
+  box-shadow: none;
+}
+
+/*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+progress {
+  vertical-align: baseline;
+}
+
+/*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+::-webkit-inner-spin-button,
+::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+[type='search'] {
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
+}
+
+/*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+::-webkit-file-upload-button {
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
+}
+
+/*
+Add the correct display in Chrome and Safari.
+*/
+
+summary {
+  display: list-item;
+}
+
+/*
+Removes the default spacing and border for appropriate elements.
+*/
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+hr,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+fieldset {
+  margin: 0;
+  padding: 0;
+}
+
+legend {
+  padding: 0;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+Reset default styling for dialogs.
+*/
+dialog {
+  padding: 0;
+}
+
+/*
+Prevent resizing textareas horizontally by default.
+*/
+
+textarea {
+  resize: vertical;
+}
+
+/*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
+}
+
+/*
+Set the default cursor for buttons.
+*/
+
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+/*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+:disabled {
+  cursor: default;
+}
+
+/*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+img,
+svg,
+video,
+canvas,
+audio,
+iframe,
+embed,
+object {
+  display: block; /* 1 */
+  vertical-align: middle; /* 2 */
+}
+
+/*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Make elements with the HTML hidden attribute stay hidden by default */
+[hidden] {
+  display: none;
+}
+
+/* Custom styles */
+
+.btn-primary {
+  padding: 0.5rem 1rem;
+  background-color: #4f46e5;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.btn-primary:hover {
+  background-color: #4338ca;
+}
+
+.btn-primary:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: #6366f1;
+  --tw-ring-offset-width: 2px;
+}
+
+.btn-secondary {
+  padding: 0.5rem 1rem;
+  background-color: #e5e7eb;
+  color: #1f2937;
+  font-weight: 500;
+  border-radius: 0.375rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.btn-secondary:hover {
+  background-color: #d1d5db;
+}
+
+.btn-secondary:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: #9ca3af;
+  --tw-ring-offset-width: 2px;
+}
+
+.input-field {
+  display: block;
+  width: 100%;
+  border-radius: 0.375rem;
+  border-color: #d1d5db;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.input-field:focus {
+  border-color: #6366f1;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: #6366f1;
+}
+
+.card {
+  background-color: #fff;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.section {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 80rem;
+}
+
+@media (min-width: 640px) {
+  .section {
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Status banner */
+.status-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  color: #fff;
+  text-align: center;
+  font-weight: 500;
+}
+
+.status-banner-warning {
+  background-color: #f59e0b;
+}
+
+/* Loading animations */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #6b7280;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Code editor styles */
+.code-editor {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.dark .code-editor {
+  background-color: #1f2937;
+}
+
+/* Dark mode toggle */
+.dark-mode-toggle {
+  position: relative;
+  display: inline-flex;
+  height: 1.5rem;
+  width: 2.75rem;
+  align-items: center;
+  border-radius: 9999px;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Header styles */
+.header {
+  background-color: #fff;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #4f46e5;
+}
+
+.logo-icon {
+  margin-right: 0.5rem;
+  height: 2rem;
+  width: 2rem;
+}
+
+.nav-container {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .nav {
+    display: flex;
+    gap: 1.5rem;
+  }
+}
+
+.nav-link {
+  font-weight: 500;
+  color: #4b5563;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.nav-link:hover {
+  color: #4f46e5;
+  background-color: #f3f4f6;
+}
+
+.nav-link.active {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+.auth-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Hero section */
+.hero {
+  background-color: #f3f4f6;
+  background-image: radial-gradient(#4f46e5 0.5px, transparent 0.5px);
+  background-size: 15px 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 4rem;
+  padding-bottom: 6rem;
+  z-index: 10;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .hero-content {
+    padding-top: 6rem;
+    padding-bottom: 8rem;
+  }
+}
+
+.hero-title {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .hero-title {
+    font-size: 3rem;
+    line-height: 1;
+  }
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  color: #4b5563;
+  margin-bottom: 2.5rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Features section */
+.features {
+  background-color: #fff;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+@media (min-width: 640px) {
+  .features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.feature-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.feature-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+  width: 3rem;
+  border-radius: 0.75rem;
+  background-color: #ede9fe;
+  color: #6d28d9;
+  margin-bottom: 1.25rem;
+}
+
+.feature-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.75rem;
+}
+
+.feature-description {
+  color: #6b7280;
+}
+
+/* How it works section */
+.how-it-works {
+  background-color: #f9fafb;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 3rem;
+}
+
+@media (min-width: 768px) {
+  .steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.step {
+  position: relative;
+}
+
+.step-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  width: 2.5rem;
+  background-color: #4f46e5;
+  color: #fff;
+  border-radius: 9999px;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.75rem;
+}
+
+.step-description {
+  color: #6b7280;
+}
+
+/* Footer */
+.footer {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.footer-inner {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 3rem;
+}
+
+@media (min-width: 640px) {
+  .footer-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.footer-logo {
+  margin-bottom: 0.5rem;
+}
+
+.footer-description {
+  color: #9ca3af;
+  margin-bottom: 1.5rem;
+}
+
+.footer-heading {
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: #f9fafb;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-link {
+  color: #9ca3af;
+  transition-property: color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.footer-link:hover {
+  color: #e5e7eb;
+}
+
+.footer-social {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  background-color: #374151;
+  color: #e5e7eb;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.footer-social-link:hover {
+  background-color: #4b5563;
+  color: #fff;
+}
+
+.footer-bottom {
+  border-top: 1px solid #374151;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .footer-bottom {
+    flex-direction: row;
+  }
+}
+
+.footer-copyright {
+  color: #9ca3af;
+}
+
+.footer-legal {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* Dashboard */
+.dashboard {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 16rem;
+  flex-shrink: 0;
+  background-color: #1f2937;
+  color: #f3f4f6;
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .sidebar {
+    display: block;
+  }
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar-nav {
+  padding: 1rem;
+}
+
+.sidebar-nav-group {
+  margin-bottom: 1.5rem;
+}
+
+.sidebar-nav-group-title {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.5rem 0.75rem;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  color: #d1d5db;
+  font-weight: 500;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.sidebar-nav-item:hover {
+  background-color: #374151;
+  color: #f3f4f6;
+}
+
+.sidebar-nav-item.active {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.dashboard-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dashboard-user-dropdown {
+  position: relative;
+}
+
+.dashboard-user-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.dashboard-user-button:hover {
+  background-color: #f3f4f6;
+}
+
+.dashboard-user-avatar {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.dashboard-user-name {
+  font-weight: 500;
+}
+
+/* Auth forms */
+.auth-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #f9fafb;
+  padding: 1.5rem;
+}
+
+.auth-form {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  width: 100%;
+  max-width: 28rem;
+}
+
+.auth-form-title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.auth-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-input {
+  padding: 0.625rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  width: 100%;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: #6366f1;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.auth-form-submit {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.auth-form-submit:hover {
+  background-color: #4338ca;
+}
+
+.auth-form-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.auth-form-link {
+  color: #4f46e5;
+  text-decoration: underline;
+}
+
+.auth-form-link:hover {
+  color: #4338ca;
+}
+
+/* Project styles */
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .project-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.project-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.project-header {
+  padding: 1.25rem;
+  background-color: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.project-title {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.project-meta {
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #6b7280;
+}
+
+.project-body {
+  padding: 1.25rem;
+}
+
+.project-description {
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.project-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.project-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.project-stat-value {
+  font-weight: 600;
+  color: #111827;
+}
+
+.project-stat-label {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  color: #6b7280;
+}
+
+.project-footer {
+  padding: 1.25rem;
+  background-color: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Code editor styles */
+.code-editor-container {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.code-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.code-editor-language {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.code-editor-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.code-editor-content {
+  background-color: #f8fafc;
+  padding: 1rem;
+  overflow-x: auto;
+  min-height: 12rem;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #1e293b;
+}
+
+/* Model status badge */
+.model-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+}
+
+.model-status-online {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.model-status-offline {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.model-status-indicator {
+  height: 0.5rem;
+  width: 0.5rem;
+  border-radius: 9999px;
+  margin-right: 0.375rem;
+}
+
+.model-status-online .model-status-indicator {
+  background-color: #16a34a;
+}
+
+.model-status-offline .model-status-indicator {
+  background-color: #dc2626;
+}
+
+/* Responsive utilities */
+.md\:flex {
+  display: flex;
+}
+
+@media (max-width: 767px) {
+  .md\:hidden {
+    display: none;
+  }
+}
+
+.mobile-menu-button {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-button {
+    display: none;
+  }
+}
+
+.mobile-menu-button:hover {
+  background-color: #f3f4f6;
+}
+
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 16rem;
+  background-color: #fff;
+  z-index: 50;
+  padding: 1.5rem;
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  box-shadow: -4px 0 6px -1px rgb(0 0 0 / 0.1), -2px 0 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.mobile-menu.open {
+  transform: translateX(0);
+}

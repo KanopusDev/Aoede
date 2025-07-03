@@ -1,0 +1,472 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Aoede Enterprise AI{% endblock %}
+
+{% block head_extra %}
+<style>
+    .dashboard-stat {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .dashboard-stat:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .project-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .project-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bg-gray-50 dark:bg-gray-900 min-h-screen pb-12">
+    <div class="bg-white dark:bg-gray-800 shadow">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="py-6">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Welcome back, <span id="user-name">User</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Stats Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Stat 1 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 dashboard-stat border-l-4 border-primary-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-primary-100 dark:bg-primary-900 rounded-full p-3">
+                        <svg class="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-sm font-medium text-gray-600 dark:text-gray-400">Active Projects</h2>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="active-projects-count">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stat 2 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 dashboard-stat border-l-4 border-green-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-green-100 dark:bg-green-900 rounded-full p-3">
+                        <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-sm font-medium text-gray-600 dark:text-gray-400">Generated Files</h2>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="generated-files-count">0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stat 3 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 dashboard-stat border-l-4 border-amber-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-amber-100 dark:bg-amber-900 rounded-full p-3">
+                        <svg class="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-sm font-medium text-gray-600 dark:text-gray-400">Execution Time</h2>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="execution-time">0s</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stat 4 -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 dashboard-stat border-l-4 border-purple-500">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-purple-100 dark:bg-purple-900 rounded-full p-3">
+                        <svg class="h-6 w-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-4">
+                        <h2 class="text-sm font-medium text-gray-600 dark:text-gray-400">Success Rate</h2>
+                        <p class="text-2xl font-semibold text-gray-900 dark:text-white" id="success-rate">0%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions and Projects Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Projects Section -->
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow mb-8">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Recent Projects</h2>
+                        <a href="/projects" class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 text-sm">View All</a>
+                    </div>
+                    <div class="px-6 py-4">
+                        <div id="projects-loading" class="text-center py-8">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-primary-500 border-t-transparent"></div>
+                            <p class="mt-2 text-gray-600 dark:text-gray-400">Loading projects...</p>
+                        </div>
+                        
+                        <div id="projects-empty" class="text-center py-8 hidden">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No projects</h3>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Get started by creating a new project.</p>
+                            <div class="mt-6">
+                                <a href="/projects/new" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                    <svg class="-ml-1 mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    New Project
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div id="projects-list" class="hidden">
+                            <div class="space-y-4">
+                                <!-- Project cards will be dynamically inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Recent Activity</h2>
+                    </div>
+                    <div class="px-6 py-4">
+                        <ul class="divide-y divide-gray-200 dark:divide-gray-700" id="activity-list">
+                            <!-- Activity items will be dynamically inserted here -->
+                            <li class="py-4 flex text-gray-500 dark:text-gray-400 text-sm italic">
+                                No recent activity
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions and AI Models -->
+            <div class="space-y-8">
+                <!-- Quick Actions -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Quick Actions</h2>
+                    </div>
+                    <div class="px-6 py-4">
+                        <div class="space-y-4">
+                            <a href="/projects/new" class="flex items-center p-3 bg-primary-50 dark:bg-primary-900 rounded-lg hover:bg-primary-100 dark:hover:bg-primary-800 transition-all">
+                                <svg class="h-6 w-6 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span class="ml-3 text-primary-700 dark:text-primary-300 font-medium">New Project</span>
+                            </a>
+                            
+                            <a href="/generate/code" class="flex items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-all">
+                                <svg class="h-6 w-6 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="ml-3 text-green-700 dark:text-green-300 font-medium">Generate Code</span>
+                            </a>
+                            
+                            <a href="/test/new" class="flex items-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-all">
+                                <svg class="h-6 w-6 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                                <span class="ml-3 text-amber-700 dark:text-amber-300 font-medium">Run Tests</span>
+                            </a>
+                            
+                            <a href="/settings" class="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-all">
+                                <svg class="h-6 w-6 text-gray-600 dark:text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                                <span class="ml-3 text-gray-700 dark:text-gray-300 font-medium">Settings</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Available AI Models -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Available AI Models</h2>
+                    </div>
+                    <div class="px-6 py-4">
+                        <div class="space-y-3" id="ai-models-list">
+                            <!-- AI model items will be dynamically inserted here -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <div class="w-3 h-3 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                                    <span class="ml-2 text-gray-600 dark:text-gray-400">Loading models...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Status -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
+                    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">System Status</h2>
+                    </div>
+                    <div class="px-6 py-4">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">API</span>
+                                <span id="api-status" class="text-sm px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">Checking...</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">GitHub AI</span>
+                                <span id="github-status" class="text-sm px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">Checking...</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">Database</span>
+                                <span id="db-status" class="text-sm px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">Checking...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize dashboard page functionality
+        initDashboardPage();
+    });
+    
+    function initDashboardPage() {
+        // Check if user is authenticated
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+            // Redirect to login if not authenticated
+            window.location.href = '/login';
+            return;
+        }
+        
+        // Load user data
+        loadUserData();
+        
+        // Load dashboard statistics
+        loadDashboardStats();
+        
+        // Load projects
+        loadProjects();
+        
+        // Load activity
+        loadActivity();
+        
+        // Load AI models
+        loadAIModels();
+        
+        // Check system status
+        checkSystemStatus();
+    }
+    
+    function loadUserData() {
+        const token = localStorage.getItem('auth_token');
+        
+        // This would be a real API call in production
+        // For now, simulate with mock data
+        const mockUser = {
+            full_name: 'John Doe',
+            username: 'johndoe',
+            email: 'john@example.com'
+        };
+        
+        // Update UI with user data
+        document.getElementById('user-name').textContent = mockUser.full_name;
+    }
+    
+    function loadDashboardStats() {
+        // Simulate API call for stats
+        setTimeout(() => {
+            document.getElementById('active-projects-count').textContent = '5';
+            document.getElementById('generated-files-count').textContent = '23';
+            document.getElementById('execution-time').textContent = '2.5m';
+            document.getElementById('success-rate').textContent = '92%';
+        }, 1000);
+    }
+    
+    function loadProjects() {
+        const projectsList = document.getElementById('projects-list');
+        const projectsLoading = document.getElementById('projects-loading');
+        const projectsEmpty = document.getElementById('projects-empty');
+        
+        // Simulate API call delay
+        setTimeout(() => {
+            // Hide loading indicator
+            projectsLoading.classList.add('hidden');
+            
+            // Mock projects data
+            const mockProjects = [
+                { id: '1', name: 'E-commerce Platform', description: 'AI-powered e-commerce solution with product recommendations', status: 'active', language: 'python', lastUpdated: '2023-11-15T10:30:00Z' },
+                { id: '2', name: 'Content Management System', description: 'Headless CMS with GraphQL API', status: 'active', language: 'typescript', lastUpdated: '2023-11-14T15:45:00Z' },
+                { id: '3', name: 'Mobile App Backend', description: 'RESTful API for iOS/Android applications', status: 'active', language: 'javascript', lastUpdated: '2023-11-10T09:20:00Z' }
+            ];
+            
+            if (mockProjects.length === 0) {
+                // Show empty state if no projects
+                projectsEmpty.classList.remove('hidden');
+            } else {
+                // Show projects list and populate with data
+                projectsList.classList.remove('hidden');
+                
+                let projectsHTML = '';
+                mockProjects.forEach(project => {
+                    const date = new Date(project.lastUpdated);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    
+                    let languageColor = 'gray';
+                    if (project.language === 'python') languageColor = 'blue';
+                    if (project.language === 'javascript') languageColor = 'yellow';
+                    if (project.language === 'typescript') languageColor = 'blue';
+                    
+                    projectsHTML += `
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 project-card">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-1">${project.name}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">${project.description}</p>
+                            </div>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                ${project.status}
+                            </span>
+                        </div>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${languageColor}-100 text-${languageColor}-800 dark:bg-${languageColor}-900 dark:text-${languageColor}-300">
+                                    ${project.language}
+                                </span>
+                                <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">Updated ${formattedDate}</span>
+                            </div>
+                            <a href="/projects/${project.id}" class="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300 text-sm font-medium">View</a>
+                        </div>
+                    </div>
+                    `;
+                });
+                
+                projectsList.querySelector('.space-y-4').innerHTML = projectsHTML;
+            }
+        }, 1500);
+    }
+    
+    function loadActivity() {
+        const activityList = document.getElementById('activity-list');
+        
+        // Simulate API call delay
+        setTimeout(() => {
+            // Mock activity data
+            const mockActivities = [
+                { type: 'project_created', message: 'Created new project: E-commerce Platform', time: '2023-11-15T10:30:00Z' },
+                { type: 'code_generated', message: 'Generated API endpoints for Content Management System', time: '2023-11-14T15:45:00Z' },
+                { type: 'test_completed', message: 'Completed test suite execution for Mobile App Backend', time: '2023-11-10T09:20:00Z' }
+            ];
+            
+            if (mockActivities.length > 0) {
+                let activitiesHTML = '';
+                mockActivities.forEach(activity => {
+                    const date = new Date(activity.time);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    
+                    let icon = '';
+                    if (activity.type === 'project_created') {
+                        icon = `<svg class="h-5 w-5 text-primary-600 dark:text-primary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>`;
+                    } else if (activity.type === 'code_generated') {
+                        icon = `<svg class="h-5 w-5 text-green-600 dark:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>`;
+                    } else if (activity.type === 'test_completed') {
+                        icon = `<svg class="h-5 w-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>`;
+                    }
+                    
+                    activitiesHTML += `
+                    <li class="py-4">
+                        <div class="flex space-x-3">
+                            <div class="flex-shrink-0">
+                                ${icon}
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white">${activity.message}</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">${formattedDate}</p>
+                            </div>
+                        </div>
+                    </li>
+                    `;
+                });
+                
+                activityList.innerHTML = activitiesHTML;
+            }
+        }, 2000);
+    }
+    
+    function loadAIModels() {
+        const modelsList = document.getElementById('ai-models-list');
+        
+        // Simulate API call delay
+        setTimeout(() => {
+            // Mock AI models data
+            const mockModels = [
+                { id: '1', name: 'Mistral-AI Codestral-2501', status: 'online' },
+                { id: '2', name: 'OpenAI GPT-4.1', status: 'offline' },
+                { id: '3', name: 'OpenAI GPT-4o', status: 'online' },
+                { id: '4', name: 'Cohere Command-A', status: 'online' }
+            ];
+            
+            let modelsHTML = '';
+            mockModels.forEach(model => {
+                const statusColor = model.status === 'online' ? 'green' : 'red';
+                
+                modelsHTML += `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 rounded-full bg-${statusColor}-500"></div>
+                        <span class="ml-2 text-gray-600 dark:text-gray-400">${model.name}</span>
+                    </div>
+                    <span class="text-xs px-2 py-1 rounded-full bg-${statusColor}-100 dark:bg-${statusColor}-900 text-${statusColor}-800 dark:text-${statusColor}-300">
+                        ${model.status}
+                    </span>
+                </div>
+                `;
+            });
+            
+            modelsList.innerHTML = modelsHTML;
+        }, 1800);
+    }
+    
+    function checkSystemStatus() {
+        const apiStatus = document.getElementById('api-status');
+        const githubStatus = document.getElementById('github-status');
+        const dbStatus = document.getElementById('db-status');
+        
+        // Simulate API call delay
+        setTimeout(() => {
+            apiStatus.textContent = 'Online';
+            apiStatus.className = 'text-sm px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300';
+            
+            githubStatus.textContent = 'Degraded';
+            githubStatus.className = 'text-sm px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-300';
+            
+            dbStatus.textContent = 'Online';
+            dbStatus.className = 'text-sm px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300';
+        }, 1500);
+    }
+</script>
+{% endblock %}

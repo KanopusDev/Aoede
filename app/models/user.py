@@ -213,28 +213,6 @@ class UserAPIKey(Base):
     def verify_key(self, key: str) -> bool:
         """Verify API key"""
         return hashlib.sha256(key.encode()).hexdigest() == self.key_hash
-
-
-class UserLoginHistory(Base):
-    """User login history model"""
-    __tablename__ = "user_login_history"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False, index=True)
-    ip_address = Column(String(45))
-    user_agent = Column(String(500))
-    success = Column(Boolean, nullable=False, index=True)
-    failure_reason = Column(String(255))
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
-    # Relationships
-    user = relationship("User", back_populates="login_history")
-    
-    def __repr__(self):
-        return f"<UserLoginHistory(id={self.id}, user_id={self.user_id}, success={self.success})>"
-    
-    def __repr__(self):
-        return f"<UserAPIKey(id={self.id}, user_id={self.user_id}, name={self.key_name})>"
     
     def is_expired(self) -> bool:
         """Check if API key is expired"""
@@ -275,5 +253,11 @@ class UserLoginHistory(Base):
     # Timestamp
     created_at = Column(DateTime(timezone=True), server_default=func.now(), index=True)
     
+    # Relationships
+    user = relationship("User", back_populates="login_history")
+    
     def __repr__(self):
         return f"<UserLoginHistory(id={self.id}, user_id={self.user_id}, success={self.success})>"
+
+
+

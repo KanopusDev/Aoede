@@ -11,6 +11,7 @@ from datetime import datetime
 from app.services.auth import auth_service, AuthenticationError, UserAlreadyExistsError
 from app.models.user import User, UserRole, UserStatus
 from app.core.logging import get_logger
+from app.services.email import email_service
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -287,10 +288,19 @@ async def update_user_profile(
                 
                 # Refresh user object
                 await session.refresh(current_user)
-        
-        logger.info(f"User profile updated: {current_user.username}")
+                
+                logger.info(f"Updated profile for user {current_user.username}")
+                
         return UserResponse.model_validate(current_user)
+                
+    except Exception as e:
+        logger.error(f"Failed to update user profile: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update profile: {str(e)}"
+        )
         
+    
     except Exception as e:
         logger.error(f"Profile update failed: {e}")
         raise HTTPException(
@@ -340,9 +350,13 @@ async def request_password_reset(reset_data: PasswordResetRequest):
                 reset_token = user.generate_reset_token()
                 await session.commit()
                 
-                # In production, send email with reset link
-                logger.info(f"Password reset requested for user: {user.username}")
-                # TODO: Send email with reset token
+        # Generate and send reset token via email
+        logger.info(f"Password reset requested for user: {user.username}")
+        await email_service.send_password_reset_email(
+            user_email=user.email,
+            username=user.username,
+            reset_token=reset_token
+        )
         
         # Always return success to prevent email enumeration
         return {"message": "If the email exists, a password reset link has been sent"}

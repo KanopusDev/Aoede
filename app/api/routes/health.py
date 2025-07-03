@@ -49,7 +49,7 @@ async def detailed_health_check():
                 logger.error(f"Redis health check failed: {e}")
                 redis_status = "unhealthy"
         else:
-            logger.info("Redis client not available (development mode)")
+            logger.info("Redis client not available ")
             redis_healthy = True  # Don't fail health check in dev mode without Redis
         
         # Check AI model service

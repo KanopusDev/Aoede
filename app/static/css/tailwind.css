@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-all duration-200;
+  }
+
+  .input-field {
+    @apply block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm;
+  }
+
+  .card {
+    @apply bg-white overflow-hidden shadow-lg rounded-lg p-6;
+  }
+
+  .section {
+    @apply py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 mx-auto max-w-7xl;
+  }
+}
+
+/* Status banner */
+.status-banner {
+  @apply fixed top-0 left-0 right-0 z-50 py-3 px-6 text-white text-center font-medium;
+}
+
+.status-banner-warning {
+  @apply bg-amber-500;
+}
+
+/* Loading animations */
+.loading-spinner {
+  @apply animate-spin h-5 w-5 text-gray-500;
+}
+
+/* Code editor styles */
+.code-editor {
+  @apply font-mono text-sm p-4 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-x-auto;
+}
+
+/* Dark mode toggle */
+.dark-mode-toggle {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}

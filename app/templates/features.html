@@ -1,0 +1,317 @@
+{% extends "base.html" %}
+
+{% block title %}Features - Aoede Enterprise AI{% endblock %}
+
+{% block head_extra %}
+<style>
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .comparison-check {
+        color: #10B981;
+    }
+    
+    .comparison-x {
+        color: #EF4444;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero py-16 text-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-5xl font-bold mb-6 animate-on-scroll" data-animation="fade-down">Enterprise-Grade AI Features</h1>
+            <p class="text-xl text-blue-100 mb-8 animate-on-scroll" data-animation="fade-up">Discover how Aoede combines cutting-edge AI with enterprise security and reliability to transform your development workflow.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Features Grid -->
+<section class="py-16 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Powerful AI Capabilities</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">Our platform offers a comprehensive suite of features designed to enhance your development experience.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 feature-card animate-on-scroll" data-animation="fade-up">
+                <div class="text-primary-500 mb-4">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Multi-Model AI Integration</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Access the latest AI models from GitHub, including GPT-4, Codestral, and Cohere, all through a single unified interface.</p>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Automatic model selection
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Context-aware prompting
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Model fallback support
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 feature-card animate-on-scroll" data-animation="fade-up" data-delay="100">
+                <div class="text-primary-500 mb-4">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Intelligent Testing</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Automatically validate generated code with comprehensive test suites and continuous validation.</p>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Syntax validation
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Automated test generation
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Self-healing code fixes
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 feature-card animate-on-scroll" data-animation="fade-up" data-delay="200">
+                <div class="text-primary-500 mb-4">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Real-Time Collaboration</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Work together with your team in real-time with WebSocket-based live updates and synchronization.</p>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Live code updates
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Team presence indicators
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Conflict resolution
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 feature-card animate-on-scroll" data-animation="fade-up" data-delay="300">
+                <div class="text-primary-500 mb-4">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Enterprise Security</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Protect your code and data with bank-grade security measures and comprehensive audit trails.</p>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        End-to-end encryption
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Role-based access control
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Compliance frameworks
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 feature-card animate-on-scroll" data-animation="fade-up" data-delay="400">
+                <div class="text-primary-500 mb-4">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Performance Monitoring</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Track system performance and AI model metrics in real-time with detailed analytics dashboards.</p>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Real-time metrics
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Resource utilization tracking
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Custom alert thresholds
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 feature-card animate-on-scroll" data-animation="fade-up" data-delay="500">
+                <div class="text-primary-500 mb-4">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3">Intelligent Chunking</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">Automatically split large codebases into optimized chunks for AI processing while maintaining context.</p>
+                <ul class="space-y-2 text-gray-600 dark:text-gray-300">
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Context preservation
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Semantic chunking
+                    </li>
+                    <li class="flex items-center">
+                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Dependency tracking
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Comparison Section -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">How Aoede Compares</h2>
+            <p class="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">See how our enterprise-grade AI platform stacks up against other solutions.</p>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+                <thead>
+                    <tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 uppercase text-sm">
+                        <th class="py-3 px-6 text-left">Features</th>
+                        <th class="py-3 px-6 text-center">Aoede</th>
+                        <th class="py-3 px-6 text-center">Competitors</th>
+                    </tr>
+                </thead>
+                <tbody class="text-gray-600 dark:text-gray-400 text-sm">
+                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <td class="py-4 px-6 font-medium text-gray-800 dark:text-white">Multi-Model AI Integration</td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-x">✗</span></td>
+                    </tr>
+                    <tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                        <td class="py-4 px-6 font-medium text-gray-800 dark:text-white">Intelligent Chunking</td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                    </tr>
+                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <td class="py-4 px-6 font-medium text-gray-800 dark:text-white">Real-Time Collaboration</td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-x">✗</span></td>
+                    </tr>
+                    <tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-700/50">
+                        <td class="py-4 px-6 font-medium text-gray-800 dark:text-white">Enterprise Security</td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-x">✗</span></td>
+                    </tr>
+                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                        <td class="py-4 px-6 font-medium text-gray-800 dark:text-white">Automated Testing</td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-x">✗</span></td>
+                    </tr>
+                    <tr class="bg-gray-50 dark:bg-gray-700/50">
+                        <td class="py-4 px-6 font-medium text-gray-800 dark:text-white">Performance Monitoring</td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-check">✓</span></td>
+                        <td class="py-4 px-6 text-center"><span class="comparison-x">✗</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-16 bg-primary-600 text-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl font-bold mb-6">Ready to Experience These Features?</h2>
+            <p class="text-xl text-blue-100 mb-8">Join thousands of developers and teams who are already using Aoede's enterprise-grade AI capabilities.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/register" class="px-8 py-4 bg-white text-primary-600 font-semibold rounded-md shadow hover:bg-gray-50 transition-all text-center">Get Started Free</a>
+                <a href="/contact" class="px-8 py-4 bg-transparent border border-white text-white font-semibold rounded-md hover:bg-white/10 transition-all text-center">Request Demo</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize features page specific functionality
+        initFeaturesPage();
+    });
+    
+    function initFeaturesPage() {
+        // Initialize features page
+        
+        // You can add any features page specific JavaScript here
+    }
+</script>
+{% endblock %}

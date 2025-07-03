@@ -7,7 +7,6 @@ from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.openapi.utils import get_openapi
 import structlog
 import uvicorn
 import time
@@ -71,16 +70,13 @@ async def lifespan(app: FastAPI):
 
 # Create FastAPI application
 app = FastAPI(
-    title="Aoede - Enterprise AI No-Code Agent", 
+    title="Aoede", 
     description="Enterprise-grade AI no-code agent with GitHub AI integration and testing tools. "
                 "This powerful platform combines the latest AI models with intuitive no-code tools, "
                 "enabling rapid development and deployment of intelligent applications. "
                 "Features include multi-model AI integration, automated testing, real-time monitoring, "
                 "and enterprise-grade security.",
     version="1.0.0",
-    openapi_version="3.0.2",  # Specify OpenAPI version
-    docs_url=None,  # Disable default docs - we'll create custom ones
-    redoc_url=None,  # Disable default redoc - we'll create custom ones
     lifespan=lifespan,
     contact={
         "name": "Kanopus Support",
@@ -90,17 +86,7 @@ app = FastAPI(
     license_info={
         "name": "MIT",
         "url": "https://opensource.org/licenses/MIT"
-    },
-    servers=[
-        {
-            "url": "http://127.0.0.1:8000",
-            "description": "Development server"
-        },
-        {
-            "url": "https://aoede.kanopus.org",
-            "description": "Production server"
-        }
-    ]
+    }
 )
 
 # Add security middleware
@@ -127,119 +113,6 @@ app.add_middleware(RateLimitMiddleware)
 # Add monitoring middleware
 app.add_middleware(MonitoringMiddleware)
 
-# Configure OpenAPI tags for better documentation organization
-tags_metadata = [
-    {
-        "name": "Health",
-        "description": "System health and status endpoints for monitoring and diagnostics",
-    },
-    {
-        "name": "Projects",
-        "description": "Project management operations including creation, retrieval, and management of AI projects",
-    },
-    {
-        "name": "Code Generation",
-        "description": "AI-powered code generation endpoints for creating, editing, and managing code",
-    },
-    {
-        "name": "Testing",
-        "description": "Automated testing tools and test result management endpoints",
-    },
-    {
-        "name": "AI Models",
-        "description": "AI model management, configuration, and usage tracking endpoints",
-    },
-    {
-        "name": "Templates",
-        "description": "Code template management for reusable code patterns and structures",
-    },
-    {
-        "name": "Monitoring",
-        "description": "System monitoring, metrics collection, and performance tracking endpoints",
-    },
-    {
-        "name": "Authentication",
-        "description": "User authentication and authorization management endpoints",
-    }
-]
-
-# Update the OpenAPI schema with enhanced metadata
-def custom_openapi():
-    if app.openapi_schema:
-        return app.openapi_schema
-    
-    try:
-        # Try the newer FastAPI signature first
-        openapi_schema = get_openapi(
-            title=app.title,
-            version=app.version,
-            description=app.description,
-            routes=app.routes,
-        )
-    except TypeError:
-        # Fallback to older signature or simpler approach
-        try:
-            openapi_schema = get_openapi(
-                routes=app.routes,
-            )
-            # Manually set title, version, description
-            if "info" in openapi_schema:
-                openapi_schema["info"]["title"] = app.title
-                openapi_schema["info"]["version"] = app.version
-                openapi_schema["info"]["description"] = app.description
-        except Exception:
-            # Final fallback - create basic schema structure
-            openapi_schema = {
-                "openapi": "3.0.2",
-                "info": {
-                    "title": app.title,
-                    "version": app.version,
-                    "description": app.description
-                },
-                "paths": {}
-            }
-    
-    # Ensure we have a valid schema structure
-    if not isinstance(openapi_schema, dict):
-        openapi_schema = {"openapi": "3.0.2", "info": {"title": app.title, "version": app.version}}
-    
-    # Add tags metadata manually
-    openapi_schema["tags"] = tags_metadata
-    
-    # Add additional OpenAPI metadata
-    if "info" not in openapi_schema:
-        openapi_schema["info"] = {}
-    
-    openapi_schema["info"]["x-logo"] = {
-        "url": "https://aoede.kanopus.org/static/favicon.ico",
-        "altText": "Aoede Logo"
-    }
-    
-    openapi_schema["info"]["termsOfService"] = "https://aoede.kanopus.org/terms"
-    
-    # Add security schemes
-    if "components" not in openapi_schema:
-        openapi_schema["components"] = {}
-    
-    openapi_schema["components"]["securitySchemes"] = {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "in": "header",
-            "name": "X-API-Key"
-        },
-        "BearerAuth": {
-            "type": "http",
-            "scheme": "bearer",
-            "bearerFormat": "JWT"
-        }
-    }
-    
-    app.openapi_schema = openapi_schema
-    return app.openapi_schema
-
-# Apply custom OpenAPI schema
-app.openapi = custom_openapi
-
 # Custom static files handler for development (no caching)
 from fastapi.responses import FileResponse
 import os
@@ -259,7 +132,7 @@ async def serve_static(file_path: str):
     else:
         raise HTTPException(status_code=404, detail="File not found")
 
-# Mount static files (fallback)
+# Mount static files 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 # Templates
@@ -268,53 +141,70 @@ templates = Jinja2Templates(directory="app/templates")
 # Include API routes
 app.include_router(api_router, prefix="/api/v1")
 
-# Also include API routes without version prefix for compatibility
-app.include_router(api_router, prefix="/api")
-
-# Also include API routes without version prefix for compatibility
-app.include_router(api_router, prefix="/api")
-
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
     """Serve the main application page"""
     return templates.TemplateResponse(
         "index.html", 
-        {"request": request, "title": "Aoede - AI No-Code Agent"}
+        {"request": request, "title": "Aoede"}
     )
 
-
-@app.get("/docs", response_class=HTMLResponse, include_in_schema=False)
-async def custom_swagger_ui_html(request: Request):
-    """Custom Swagger UI documentation page"""
+@app.get("/login", response_class=HTMLResponse)
+async def login_page(request: Request):
+    """Serve the login page"""
     return templates.TemplateResponse(
-        "docs.html", 
-        {
-            "request": request, 
-            "title": "Aoede API Documentation",
-            "openapi_url": app.openapi_url or "/openapi.json"
-        }
+        "login.html", 
+        {"request": request, "title": "Login - Aoede"}
     )
 
-
-@app.get("/redoc", response_class=HTMLResponse, include_in_schema=False)
-async def custom_redoc_html(request: Request):
-    """Custom ReDoc documentation page"""
+@app.get("/register", response_class=HTMLResponse)
+async def register_page(request: Request):
+    """Serve the registration page"""
     return templates.TemplateResponse(
-        "redoc.html", 
-        {
-            "request": request, 
-            "title": "Aoede API Reference",
-            "openapi_url": app.openapi_url or "/openapi.json"
-        }
+        "register.html", 
+        {"request": request, "title": "Register - Aoede"}
     )
 
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard_page(request: Request):
+    """Serve the dashboard page"""
+    return templates.TemplateResponse(
+        "dashboard.html", 
+        {"request": request, "title": "Dashboard - Aoede"}
+    )
 
-@app.get("/openapi.json")
-async def get_openapi():
-    """Return the OpenAPI schema as JSON"""
-    return custom_openapi()
+@app.get("/about", response_class=HTMLResponse)
+async def about_page(request: Request):
+    """Serve the about page"""
+    return templates.TemplateResponse(
+        "about.html", 
+        {"request": request, "title": "About - Aoede"}
+    )
 
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page(request: Request):
+    """Serve the contact page"""
+    return templates.TemplateResponse(
+        "contact.html", 
+        {"request": request, "title": "Contact - Aoede"}
+    )
+
+@app.get("/features", response_class=HTMLResponse)
+async def features_page(request: Request):
+    """Serve the features page"""
+    return templates.TemplateResponse(
+        "features.html", 
+        {"request": request, "title": "Features - Aoede"}
+    )
+
+@app.get("/settings", response_class=HTMLResponse)
+async def settings_page(request: Request):
+    """Serve the settings page"""
+    return templates.TemplateResponse(
+        "settings.html", 
+        {"request": request, "title": "Settings - Aoede"}
+    )
 
 @app.get("/health", tags=["Health"])
 async def health_check():

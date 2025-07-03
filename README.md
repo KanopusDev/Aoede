@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎵 Aoede - Enterprise AI No-Code Agent
+# 🎵 Aoede
 
 *Empowering enterprises with intelligent, no-code AI solutions*
 

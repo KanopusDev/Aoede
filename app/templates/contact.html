@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - Aoede Enterprise AI{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-hero py-16 text-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-3xl md:text-5xl font-bold mb-6 animate-on-scroll" data-animation="fade-down">Contact Us</h1>
+            <p class="text-xl text-blue-100 mb-8 animate-on-scroll" data-animation="fade-up">Have questions or need help? We're here to assist you with any inquiries about Aoede.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="py-16 bg-white dark:bg-gray-800">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-12">
+                <!-- Contact Form -->
+                <div class="lg:col-span-3 animate-on-scroll" data-animation="fade-right">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Send Us a Message</h2>
+                        
+                        <div id="contact-success" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6 hidden" role="alert">
+                            <p class="font-bold">Message Sent!</p>
+                            <p class="block sm:inline">Thank you for contacting us. We'll get back to you shortly.</p>
+                        </div>
+                        
+                        <div id="contact-error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6 hidden" role="alert">
+                            <p class="font-bold">Error</p>
+                            <p class="block sm:inline" id="contact-error-message">There was a problem sending your message. Please try again.</p>
+                        </div>
+                        
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Full Name</label>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        id="name" 
+                                        class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white sm:text-sm" 
+                                        placeholder="Your name"
+                                        required
+                                    >
+                                </div>
+                                <div>
+                                    <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                                    <input 
+                                        type="email" 
+                                        name="email" 
+                                        id="email" 
+                                        class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white sm:text-sm" 
+                                        placeholder="you@example.com"
+                                        required
+                                    >
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+                                <input 
+                                    type="text" 
+                                    name="subject" 
+                                    id="subject" 
+                                    class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white sm:text-sm" 
+                                    placeholder="How can we help you?"
+                                    required
+                                >
+                            </div>
+                            
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
+                                <textarea 
+                                    id="message" 
+                                    name="message" 
+                                    rows="4" 
+                                    class="appearance-none block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-white sm:text-sm" 
+                                    placeholder="Your message details"
+                                    required
+                                ></textarea>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex items-center h-5">
+                                    <input 
+                                        id="privacy" 
+                                        name="privacy" 
+                                        type="checkbox" 
+                                        class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 dark:border-gray-600 rounded dark:bg-gray-700 dark:checked:bg-primary-600"
+                                        required
+                                    >
+                                </div>
+                                <div class="ml-3 text-sm">
+                                    <label for="privacy" class="font-medium text-gray-700 dark:text-gray-300">I agree to the <a href="/privacy" class="text-primary-600 hover:text-primary-500 dark:text-primary-400">Privacy Policy</a> and consent to being contacted regarding my inquiry.</label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <button 
+                                    type="submit" 
+                                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                >
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Contact Info -->
+                <div class="lg:col-span-2 animate-on-scroll" data-animation="fade-left">
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8 mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Contact Information</h2>
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Email</h3>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-1">support@aoede.kanopus.org</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Phone</h3>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-1">+1 (555) 123-4567</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-6 w-6 text-primary-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-4">
+                                    <h3 class="text-lg font-medium text-gray-900 dark:text-white">Location</h3>
+                                    <p class="text-gray-600 dark:text-gray-300 mt-1">123 Tech Avenue<br>San Francisco, CA 94107</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-700 rounded-lg shadow-lg p-8">
+                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Support Hours</h2>
+                        
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Monday - Friday:</span>
+                                <span class="font-medium text-gray-900 dark:text-white">9:00 AM - 6:00 PM EST</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Saturday:</span>
+                                <span class="font-medium text-gray-900 dark:text-white">10:00 AM - 4:00 PM EST</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-300">Sunday:</span>
+                                <span class="font-medium text-gray-900 dark:text-white">Closed</span>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-gray-200 dark:border-gray-600">
+                                <p class="text-gray-600 dark:text-gray-300 text-sm">For urgent support outside of business hours, please email <span class="text-primary-600 dark:text-primary-400">emergency@aoede.kanopus.org</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="py-16 bg-gray-50 dark:bg-gray-900">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">Frequently Asked Questions</h2>
+                <p class="text-xl text-gray-600 dark:text-gray-300">Find answers to the most common questions about Aoede.</p>
+            </div>
+            
+            <div class="space-y-8" id="faq-accordion">
+                <!-- FAQ Item 1 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden animate-on-scroll" data-animation="fade-up">
+                    <button class="w-full px-8 py-4 text-left focus:outline-none flex justify-between items-center faq-question" data-target="faq-1">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">What is Aoede and how does it work?</h3>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="faq-1" class="px-8 py-4 bg-gray-50 dark:bg-gray-700 hidden faq-answer">
+                        <p class="text-gray-600 dark:text-gray-300">Aoede is an enterprise-grade AI no-code agent platform that enables you to create intelligent applications without coding expertise. It works by integrating multiple AI models from GitHub, including GPT-4, Codestral, and Cohere, through a unified interface with real-time collaboration, automated testing, and enterprise security features.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden animate-on-scroll" data-animation="fade-up" data-delay="100">
+                    <button class="w-full px-8 py-4 text-left focus:outline-none flex justify-between items-center faq-question" data-target="faq-2">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Is my data secure with Aoede?</h3>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="faq-2" class="px-8 py-4 bg-gray-50 dark:bg-gray-700 hidden faq-answer">
+                        <p class="text-gray-600 dark:text-gray-300">Yes, security is our top priority. Aoede employs bank-grade security measures, including end-to-end encryption, role-based access control, and comprehensive audit trails. We are compliant with SOC2, GDPR, and HIPAA standards to ensure your code and data are protected at all times.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 3 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden animate-on-scroll" data-animation="fade-up" data-delay="200">
+                    <button class="w-full px-8 py-4 text-left focus:outline-none flex justify-between items-center faq-question" data-target="faq-3">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Do I need technical expertise to use Aoede?</h3>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="faq-3" class="px-8 py-4 bg-gray-50 dark:bg-gray-700 hidden faq-answer">
+                        <p class="text-gray-600 dark:text-gray-300">No, Aoede is designed to be accessible to users of all technical backgrounds. Our intuitive interface allows anyone to build sophisticated AI-powered applications without coding knowledge. However, developers can also leverage advanced features and API integration for more complex use cases.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 4 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden animate-on-scroll" data-animation="fade-up" data-delay="300">
+                    <button class="w-full px-8 py-4 text-left focus:outline-none flex justify-between items-center faq-question" data-target="faq-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">What pricing plans are available for Aoede?</h3>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="faq-4" class="px-8 py-4 bg-gray-50 dark:bg-gray-700 hidden faq-answer">
+                        <p class="text-gray-600 dark:text-gray-300">Aoede offers flexible pricing plans to suit different needs, including a free tier for individuals, professional plans for small teams, and enterprise options for organizations with advanced requirements. Contact our sales team for detailed pricing information and customized enterprise solutions.</p>
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 5 -->
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden animate-on-scroll" data-animation="fade-up" data-delay="400">
+                    <button class="w-full px-8 py-4 text-left focus:outline-none flex justify-between items-center faq-question" data-target="faq-5">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">How does Aoede handle AI model limitations?</h3>
+                        <svg class="w-5 h-5 text-gray-500 transform transition-transform faq-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div id="faq-5" class="px-8 py-4 bg-gray-50 dark:bg-gray-700 hidden faq-answer">
+                        <p class="text-gray-600 dark:text-gray-300">Aoede addresses AI model limitations through intelligent chunking and context preservation techniques. Our platform automatically splits large codebases into optimized chunks for processing while maintaining semantic understanding. Additionally, we implement model fallback support, automatically switching to alternative models if one is unavailable or not performing optimally for a particular task.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize contact page specific functionality
+        initContactPage();
+    });
+    
+    function initContactPage() {
+        // Initialize contact page
+        
+        // Handle contact form submission
+        const contactForm = document.getElementById('contact-form');
+        const contactSuccess = document.getElementById('contact-success');
+        const contactError = document.getElementById('contact-error');
+        const contactErrorMessage = document.getElementById('contact-error-message');
+        
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Reset form states
+                contactSuccess.classList.add('hidden');
+                contactError.classList.add('hidden');
+                
+                // Get form data
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const subject = document.getElementById('subject').value;
+                const message = document.getElementById('message').value;
+                const privacy = document.getElementById('privacy').checked;
+                
+                // Validate form data
+                if (!name || !email || !subject || !message || !privacy) {
+                    contactError.classList.remove('hidden');
+                    contactErrorMessage.textContent = 'Please fill in all required fields.';
+                    return;
+                }
+                
+                // In a real application, you would send this data to your backend API
+                // For demonstration purposes, we'll just simulate a successful submission
+                setTimeout(() => {
+                    // Show success message
+                    contactSuccess.classList.remove('hidden');
+                    
+                    // Reset form
+                    contactForm.reset();
+                }, 1000);
+            });
+        }
+        
+        // Handle FAQ accordion
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                const answer = document.getElementById(targetId);
+                const icon = this.querySelector('.faq-icon');
+                
+                // Toggle the answer visibility
+                if (answer.classList.contains('hidden')) {
+                    answer.classList.remove('hidden');
+                    icon.classList.add('rotate-180');
+                } else {
+                    answer.classList.add('hidden');
+                    icon.classList.remove('rotate-180');
+                }
+            });
+        });
+    }
+</script>
+{% endblock %}

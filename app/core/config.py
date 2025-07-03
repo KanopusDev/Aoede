@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     HOST: str = "0.0.0.0"
     PORT: int = 1297
     WORKERS: int = 4
+    BASE_URL: str = "https://aoede.kanopus.org"
     
     # Security
     SECRET_KEY: str = secrets.token_urlsafe(32)
@@ -32,6 +33,16 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
+    # Email Configuration
+    EMAIL_ENABLED: bool = True
+    SMTP_SERVER: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_SENDER_EMAIL: str = "noreply@kanopus.org"
+    SMTP_SENDER_NAME: str = "Aoede AI"
+    SMTP_USE_TLS: bool = True
+    
     # AI Models
     GITHUB_TOKEN: str
     GITHUB_AI_BASE_URL: str = "https://models.github.ai/inference"

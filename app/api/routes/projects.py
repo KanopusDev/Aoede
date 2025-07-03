@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 from uuid import UUID
-import time
+from datetime import datetime
 
 from app.core.database import get_db_session
 from app.models import Project, ProjectStatus, CodeGeneration
@@ -224,7 +224,7 @@ async def update_project(
                 update_data["status"] = project_data.status
             
             if update_data:
-                update_data["updated_at"] = time.time()
+                update_data["updated_at"] = datetime.utcnow()
                 
                 update_query = update(Project).where(
                     Project.id == project_id

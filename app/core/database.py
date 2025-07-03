@@ -72,7 +72,7 @@ async def init_db():
             await redis_client.ping()
             logger.info("Redis connection established")
         except Exception as redis_error:
-            logger.warning(f"Redis connection failed (development mode): {redis_error}")
+            logger.warning(f"Redis connection failed : {redis_error}")
             logger.info("Continuing without Redis - some features may be limited")
             redis_client = None
         
@@ -82,10 +82,10 @@ async def init_db():
                 await conn.run_sync(Base.metadata.create_all)
             logger.info("Database tables created successfully")
         except Exception as db_error:
-            logger.warning(f"Database connection failed (development mode): {db_error}")
+            logger.warning(f"Database connection failed : {db_error}")
             logger.info("Continuing without PostgreSQL - using SQLite fallback for development")
         
-        logger.info("Database initialization completed (development mode)")
+        logger.info("Database initialization completed ")
         
     except Exception as e:
         logger.error(f"Critical initialization error: {e}")

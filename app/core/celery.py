@@ -12,10 +12,8 @@ celery_app = Celery(
     broker=settings.CELERY_BROKER_URL,
     backend=settings.REDIS_URL,
     include=[
-        "app.tasks.code_generation",
+        "app.tasks.generator",
         "app.tasks.testing",
-        "app.tasks.model_health",
-        "app.tasks.cleanup"
     ]
 )
 
@@ -23,10 +21,8 @@ celery_app = Celery(
 celery_app.conf.update(
     # Task routing
     task_routes={
-        "app.tasks.code_generation.*": {"queue": "code_generation"},
+        "app.tasks.generator.*": {"queue": "code_generation"},
         "app.tasks.testing.*": {"queue": "testing"},
-        "app.tasks.model_health.*": {"queue": "health_checks"},
-        "app.tasks.cleanup.*": {"queue": "cleanup"}
     },
     
     # Task serialization

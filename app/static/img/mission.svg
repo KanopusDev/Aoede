@@ -1,0 +1,50 @@
+<svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background gradient -->
+    <defs>
+        <linearGradient id="gradientBg" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.1"/>
+            <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.1"/>
+        </linearGradient>
+    </defs>
+    <rect width="600" height="400" rx="10" fill="url(#gradientBg)" />
+    
+    <!-- Abstract shapes representing mission/vision -->
+    <circle cx="150" cy="200" r="80" fill="#0ea5e9" opacity="0.2" />
+    <circle cx="450" cy="200" r="80" fill="#6d28d9" opacity="0.2" />
+    <circle cx="300" cy="200" r="100" fill="#0284c7" opacity="0.2" />
+    
+    <!-- Central icon -->
+    <g transform="translate(240, 140)">
+        <circle cx="60" cy="60" r="50" fill="#0ea5e9" />
+        <path d="M60 30v60M30 60h60" stroke="white" stroke-width="8" stroke-linecap="round" />
+        <circle cx="60" cy="60" r="25" fill="white" opacity="0.3" />
+    </g>
+    
+    <!-- Connected nodes -->
+    <g stroke="#0ea5e9" stroke-width="2">
+        <line x1="100" y1="100" x2="240" y2="140" />
+        <line x1="500" y1="100" x2="360" y2="140" />
+        <line x1="100" y1="300" x2="240" y2="260" />
+        <line x1="500" y1="300" x2="360" y2="260" />
+    </g>
+    
+    <!-- Nodes -->
+    <circle cx="100" cy="100" r="15" fill="#0ea5e9" />
+    <circle cx="500" cy="100" r="15" fill="#6d28d9" />
+    <circle cx="100" cy="300" r="15" fill="#6d28d9" />
+    <circle cx="500" cy="300" r="15" fill="#0ea5e9" />
+    
+    <!-- Small decorative elements -->
+    <g fill="#0ea5e9">
+        <circle cx="150" cy="150" r="5" />
+        <circle cx="450" cy="150" r="5" />
+        <circle cx="150" cy="250" r="5" />
+        <circle cx="450" cy="250" r="5" />
+    </g>
+    <g fill="#6d28d9">
+        <circle cx="200" cy="100" r="5" />
+        <circle cx="400" cy="100" r="5" />
+        <circle cx="200" cy="300" r="5" />
+        <circle cx="400" cy="300" r="5" />
+    </g>
+</svg>
